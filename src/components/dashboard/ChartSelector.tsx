@@ -1,29 +1,17 @@
 
 import React, { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PowerChart from "./PowerChart";
-import PerformanceChart from "./PerformanceChart";
 
 type Period = "daily" | "monthly" | "annual";
-type ChartType = "power" | "performance";
 
 const ChartSelector = () => {
   const [period, setPeriod] = useState<Period>("daily");
-  const [chartType, setChartType] = useState<ChartType>("power");
   
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
-        <Tabs 
-          value={chartType} 
-          onValueChange={(value) => setChartType(value as ChartType)}
-          className="w-full sm:w-auto"
-        >
-          <TabsList className="grid grid-cols-2 w-full sm:w-[400px]">
-            <TabsTrigger value="power">Geração de Energia</TabsTrigger>
-            <TabsTrigger value="performance">Performance</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <h3 className="text-lg font-medium">Geração de Energia</h3>
         
         <Tabs 
           value={period} 
@@ -38,11 +26,7 @@ const ChartSelector = () => {
         </Tabs>
       </div>
       
-      {chartType === "power" ? (
-        <PowerChart period={period} />
-      ) : (
-        <PerformanceChart period={period} />
-      )}
+      <PowerChart period={period} />
     </div>
   );
 };

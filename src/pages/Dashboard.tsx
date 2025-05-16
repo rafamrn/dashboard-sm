@@ -6,6 +6,7 @@ import StatusGauge from "@/components/dashboard/StatusGauge";
 import StringBox from "@/components/dashboard/StringBox";
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import ChartSelector from "@/components/dashboard/ChartSelector";
+import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
 import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
@@ -63,6 +64,10 @@ const Dashboard = () => {
   const totalEnergyMonth = 3245.6;
   const totalEnergyYear = 24312.5;
   
+  // Expected vs actual performance data
+  const actualPerformance = totalEnergyToday;
+  const expectedPerformance = 175.0;
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -89,8 +94,19 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Energy charts */}
-      <ChartSelector />
+      {/* Energy charts and performance */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <ChartSelector />
+        </div>
+        <div>
+          <PerformancePieChart 
+            title="Performance Diária"
+            actualValue={actualPerformance}
+            expectedValue={expectedPerformance}
+          />
+        </div>
+      </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SummaryCard 
