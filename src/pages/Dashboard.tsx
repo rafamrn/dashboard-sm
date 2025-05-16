@@ -5,6 +5,7 @@ import InverterCard, { InverterData } from "@/components/dashboard/InverterCard"
 import StatusGauge from "@/components/dashboard/StatusGauge";
 import StringBox from "@/components/dashboard/StringBox";
 import SummaryCard from "@/components/dashboard/SummaryCard";
+import ChartSelector from "@/components/dashboard/ChartSelector";
 import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
@@ -87,6 +88,9 @@ const Dashboard = () => {
           </Badge>
         </div>
       </div>
+      
+      {/* Energy charts */}
+      <ChartSelector />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SummaryCard 

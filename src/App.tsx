@@ -8,6 +8,7 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Map from "./pages/Map";
+import Projections from "./pages/Projections";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/" element={<Layout />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="map" element={<Map />} />
+            <Route path="projections" element={<Projections />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
