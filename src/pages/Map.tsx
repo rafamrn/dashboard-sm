@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Circle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,6 +19,7 @@ interface InverterLocation {
 
 const Map = () => {
   const [selectedInverter, setSelectedInverter] = useState<InverterLocation | null>(null);
+  const [flowAnimation, setFlowAnimation] = useState(0);
   
   // Mock data for inverter locations
   const inverters: InverterLocation[] = [
@@ -83,6 +84,15 @@ const Map = () => {
     }
   ];
   
+  // Animation for energy flow
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFlowAnimation((prev) => (prev + 1) % 100);
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
   const handleInverterClick = (inverter: InverterLocation) => {
     setSelectedInverter(inverter);
   };
@@ -105,24 +115,136 @@ const Map = () => {
         <TabsContent value="map">
           <Card>
             <CardContent className="pt-6">
-              <div className="relative w-full h-[500px] border rounded-lg bg-blue-50 overflow-hidden">
+              <div className="relative w-full h-[500px] border rounded-lg bg-blue-50 dark:bg-blue-950/20 overflow-hidden">
                 {/* Plant map background with grid */}
                 <div className="absolute inset-0 grid grid-cols-10 grid-rows-10">
                   {Array.from({ length: 100 }).map((_, i) => (
-                    <div key={i} className="border border-blue-100"></div>
+                    <div key={i} className="border border-blue-100 dark:border-blue-900/30"></div>
                   ))}
                 </div>
                 
                 {/* Plant map elements */}
                 <div className="absolute inset-0">
-                  {/* Main connections */}
+                  {/* Main connections with animated energy flow */}
                   <svg className="w-full h-full">
+                    {/* Horizontal connections */}
                     <line x1="25%" y1="40%" x2="70%" y2="40%" stroke="red" strokeWidth="2" />
                     <line x1="15%" y1="65%" x2="60%" y2="65%" stroke="red" strokeWidth="2" />
+                    
+                    {/* Vertical connections */}
                     <line x1="25%" y1="40%" x2="15%" y2="65%" stroke="red" strokeWidth="2" />
                     <line x1="70%" y1="40%" x2="60%" y2="65%" stroke="red" strokeWidth="2" />
                     <line x1="15%" y1="65%" x2="10%" y2="85%" stroke="red" strokeWidth="2" />
                     <line x1="60%" y1="65%" x2="90%" y2="85%" stroke="red" strokeWidth="2" />
+                    
+                    {/* Energy flow animations */}
+                    {/* Horizontal flow 1 */}
+                    <circle r="3" fill="yellow" opacity="0.8">
+                      <animate 
+                        attributeName="cx" 
+                        from="25%" 
+                        to="70%" 
+                        dur="3s" 
+                        repeatCount="indefinite" 
+                      />
+                      <animate 
+                        attributeName="cy" 
+                        from="40%" 
+                        to="40%" 
+                        dur="3s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
+                    
+                    {/* Horizontal flow 2 */}
+                    <circle r="3" fill="yellow" opacity="0.8">
+                      <animate 
+                        attributeName="cx" 
+                        from="15%" 
+                        to="60%" 
+                        dur="4s" 
+                        repeatCount="indefinite" 
+                      />
+                      <animate 
+                        attributeName="cy" 
+                        from="65%" 
+                        to="65%" 
+                        dur="4s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
+                    
+                    {/* Vertical flow 1 */}
+                    <circle r="3" fill="yellow" opacity="0.8">
+                      <animate 
+                        attributeName="cx" 
+                        from="25%" 
+                        to="15%" 
+                        dur="2.5s" 
+                        repeatCount="indefinite" 
+                      />
+                      <animate 
+                        attributeName="cy" 
+                        from="40%" 
+                        to="65%" 
+                        dur="2.5s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
+                    
+                    {/* Vertical flow 2 */}
+                    <circle r="3" fill="yellow" opacity="0.8">
+                      <animate 
+                        attributeName="cx" 
+                        from="70%" 
+                        to="60%" 
+                        dur="2.5s" 
+                        repeatCount="indefinite" 
+                      />
+                      <animate 
+                        attributeName="cy" 
+                        from="40%" 
+                        to="65%" 
+                        dur="2.5s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
+                    
+                    {/* Vertical flow 3 */}
+                    <circle r="3" fill="yellow" opacity="0.8">
+                      <animate 
+                        attributeName="cx" 
+                        from="15%" 
+                        to="10%" 
+                        dur="2s" 
+                        repeatCount="indefinite" 
+                      />
+                      <animate 
+                        attributeName="cy" 
+                        from="65%" 
+                        to="85%" 
+                        dur="2s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
+                    
+                    {/* Vertical flow 4 */}
+                    <circle r="3" fill="yellow" opacity="0.8">
+                      <animate 
+                        attributeName="cx" 
+                        from="60%" 
+                        to="90%" 
+                        dur="3s" 
+                        repeatCount="indefinite" 
+                      />
+                      <animate 
+                        attributeName="cy" 
+                        from="65%" 
+                        to="85%" 
+                        dur="3s" 
+                        repeatCount="indefinite" 
+                      />
+                    </circle>
                   </svg>
                   
                   {/* Inverters and other elements */}
@@ -188,7 +310,7 @@ const Map = () => {
                 {inverters.map((inverter) => (
                   <div 
                     key={inverter.id}
-                    className="p-3 border rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-50"
+                    className="p-3 border rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
                     onClick={() => handleInverterClick(inverter)}
                   >
                     <div className="flex items-center gap-3">

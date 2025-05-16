@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
+import InverterOperationChart from "@/components/dashboard/InverterOperationChart";
 
 type Period = "daily" | "monthly" | "annual";
 
@@ -16,25 +17,33 @@ const Performance = () => {
       id: "inv1", 
       name: "Inversor 01", 
       actual: 72.5, 
-      expected: 80.0 
+      expected: 80.0,
+      operationHours: 10.5,
+      totalHours: 12.0
     },
     { 
       id: "inv2", 
       name: "Inversor 02", 
       actual: 77.3, 
-      expected: 80.0 
+      expected: 80.0,
+      operationHours: 11.2,
+      totalHours: 12.0
     },
     { 
       id: "inv3", 
       name: "Inversor 03", 
       actual: 73.8, 
-      expected: 80.0 
+      expected: 80.0,
+      operationHours: 9.8,
+      totalHours: 12.0
     },
     { 
       id: "inv4", 
       name: "Inversor 04", 
       actual: 65.2, 
-      expected: 80.0 
+      expected: 80.0,
+      operationHours: 8.5,
+      totalHours: 12.0
     }
   ];
   
@@ -87,11 +96,16 @@ const Performance = () => {
       <h2 className="text-xl font-semibold mt-8 mb-4">Performance por Inversor</h2>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {inverters.map((inverter) => (
-          <div key={inverter.id}>
+          <div key={inverter.id} className="grid gap-4">
             <PerformancePieChart
               inverterName={inverter.name}
               actualValue={inverter.actual}
               expectedValue={inverter.expected}
+            />
+            <InverterOperationChart
+              name={inverter.name}
+              operationHours={inverter.operationHours}
+              totalHours={inverter.totalHours}
             />
           </div>
         ))}
