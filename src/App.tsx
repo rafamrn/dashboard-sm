@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Map from "./pages/Map";
 import Projections from "./pages/Projections";
 import Performance from "./pages/Performance";
+import IVCurve from "./pages/IVCurve";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="map" element={<Map />} />
             <Route path="performance" element={<Performance />} />
             <Route path="projections" element={<Projections />} />
+            <Route path="iv-curve" element={<IVCurve />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

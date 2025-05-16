@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut } from "lucide-react";
+import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 
 const Header = () => {
@@ -72,6 +72,17 @@ const Header = () => {
             <Link to="/map" className="flex items-center gap-2">
               <Map className="h-4 w-4" />
               Mapa
+            </Link>
+          </Button>
+          
+          <Button
+            variant={isActive("/iv-curve") ? "secondary" : "ghost"}
+            size="sm"
+            asChild
+          >
+            <Link to="/iv-curve" className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              Curva IV
             </Link>
           </Button>
           

@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Circle } from "lucide-react";
+import { Circle, Maximize2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 interface InverterLocation {
   id: string;
@@ -20,6 +21,7 @@ interface InverterLocation {
 const Map = () => {
   const [selectedInverter, setSelectedInverter] = useState<InverterLocation | null>(null);
   const [flowAnimation, setFlowAnimation] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Mock data for inverter locations
   const inverters: InverterLocation[] = [
@@ -97,6 +99,30 @@ const Map = () => {
     setSelectedInverter(inverter);
   };
   
+  const toggleFullscreen = () => {
+    const mapElement = document.getElementById("map-container");
+    if (!mapElement) return;
+    
+    if (!isFullscreen) {
+      if (mapElement.requestFullscreen) {
+        mapElement.requestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+  
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+  
   return (
     <div className="space-y-6">
       <div>
@@ -115,7 +141,18 @@ const Map = () => {
         <TabsContent value="map">
           <Card>
             <CardContent className="pt-6">
-              <div className="relative w-full h-[500px] border rounded-lg bg-blue-50 dark:bg-blue-950/20 overflow-hidden">
+              <div className="flex justify-end mb-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={toggleFullscreen}
+                  className="flex items-center gap-2"
+                >
+                  <Maximize2 className="h-4 w-4" />
+                  {isFullscreen ? "Sair de Tela Cheia" : "Tela Cheia"}
+                </Button>
+              </div>
+              <div id="map-container" className="relative w-full h-[500px] border rounded-lg bg-blue-50 dark:bg-blue-950/20 overflow-hidden">
                 {/* Plant map background with grid */}
                 <div className="absolute inset-0 grid grid-cols-10 grid-rows-10">
                   {Array.from({ length: 100 }).map((_, i) => (
