@@ -59,29 +59,32 @@ const PerformancePieChart = ({
               diff: { theme: { light: '#f43f5e', dark: '#fb7185' } }
             }}
           >
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={40}
-                outerRadius={60}
-                paddingAngle={2}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <ChartTooltip content={<ChartTooltipContent />} />
-            </PieChart>
-            <ChartLegend 
-              payload={[
-                { value: 'Gerado', dataKey: 'actual', color: COLORS[0] },
-                { value: 'Diferença', dataKey: 'diff', color: COLORS[1] }
-              ]} 
-              content={<ChartLegendContent />} 
-            />
+            {/* Wrap chart elements with a React Fragment */}
+            <>
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={40}
+                  outerRadius={60}
+                  paddingAngle={2}
+                  dataKey="value"
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+              <ChartLegend 
+                payload={[
+                  { value: 'Gerado', dataKey: 'actual', color: COLORS[0] },
+                  { value: 'Diferença', dataKey: 'diff', color: COLORS[1] }
+                ]} 
+                content={<ChartLegendContent />} 
+              />
+            </>
           </ChartContainer>
         </div>
       </CardContent>

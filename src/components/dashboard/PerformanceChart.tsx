@@ -97,34 +97,37 @@ const PerformanceChart = ({ period }: PerformanceChartProps) => {
           }}
           className="h-80"
         >
-          <ComposedChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-            <XAxis dataKey={xKey} />
-            <YAxis unit={` ${unit}`} />
-            <ChartTooltip content={<ChartTooltipContent />} />
-            <Bar
-              dataKey="actual"
-              name="actual"
-              fill="var(--color-actual)"
-              opacity={0.8}
-              barSize={20}
+          {/* Wrap chart elements with a React Fragment */}
+          <>
+            <ComposedChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+              <XAxis dataKey={xKey} />
+              <YAxis unit={` ${unit}`} />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <Bar
+                dataKey="actual"
+                name="actual"
+                fill="var(--color-actual)"
+                opacity={0.8}
+                barSize={20}
+              />
+              <Line
+                type="monotone"
+                dataKey="expected"
+                name="expected"
+                stroke="var(--color-expected)"
+                strokeWidth={2}
+                dot={false}
+              />
+            </ComposedChart>
+            <ChartLegend 
+              payload={[
+                { value: 'Real', dataKey: 'actual', color: 'var(--color-actual)' },
+                { value: 'Esperado', dataKey: 'expected', color: 'var(--color-expected)' }
+              ]} 
+              content={<ChartLegendContent />} 
             />
-            <Line
-              type="monotone"
-              dataKey="expected"
-              name="expected"
-              stroke="var(--color-expected)"
-              strokeWidth={2}
-              dot={false}
-            />
-          </ComposedChart>
-          <ChartLegend 
-            payload={[
-              { value: 'Real', dataKey: 'actual', color: 'var(--color-actual)' },
-              { value: 'Esperado', dataKey: 'expected', color: 'var(--color-expected)' }
-            ]} 
-            content={<ChartLegendContent />} 
-          />
+          </>
         </ChartContainer>
       </CardContent>
     </Card>
