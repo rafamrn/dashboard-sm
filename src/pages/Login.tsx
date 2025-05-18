@@ -41,34 +41,35 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 dark:bg-gray-950 p-4">
       <div className="w-full max-w-md">
         <div className="flex justify-center mb-6">
-          <div className="solar-gradient rounded-full p-3 shadow-lg">
+          <div className="solar-gradient rounded-full p-3 shadow-lg dark:bg-gray-800 dark:shadow-gray-700/30">
             <Sun className="h-10 w-10 text-yellow-300" />
           </div>
         </div>
-        <Card>
+        <Card className="dark:bg-gray-800 dark:border-gray-700">
           <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-2xl font-bold">SolarMonitor</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl font-bold dark:text-white">SolarMonitor</CardTitle>
+            <CardDescription className="dark:text-gray-300">
               Sistema de Monitoramento de Usina Solar Fotovoltaica
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleLogin}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Usuário</Label>
+                <Label htmlFor="username" className="dark:text-gray-300">Usuário</Label>
                 <Input
                   id="username"
                   placeholder="Digite seu usuário"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password" className="dark:text-gray-300">Senha</Label>
                 <Input
                   id="password"
                   type="password"
@@ -76,13 +77,14 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 />
               </div>
             </CardContent>
             <CardFooter>
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full dark:bg-blue-600 dark:hover:bg-blue-700" 
                 disabled={isLoading}
               >
                 {isLoading ? "Entrando..." : "Entrar"}

@@ -22,6 +22,8 @@ const Map = () => {
   const [selectedInverter, setSelectedInverter] = useState<InverterLocation | null>(null);
   const [flowAnimation, setFlowAnimation] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
   
   // Mock data for inverter locations
   const inverters: InverterLocation[] = [
@@ -54,35 +56,60 @@ const Map = () => {
       name: "String Box 01", 
       isOn: true, 
       x: 15, 
-      y: 65 
+      y: 65,
+      details: {
+        powerOutput: 12.1,
+        voltage: 595,
+        temperature: 36.5
+      }
     },
     { 
       id: "string2", 
       name: "String Box 02", 
       isOn: true, 
       x: 60, 
-      y: 65 
+      y: 65,
+      details: {
+        powerOutput: 11.9,
+        voltage: 596,
+        temperature: 35.8
+      }
     },
     { 
       id: "qdac", 
       name: "QDAC", 
       isOn: true, 
       x: 90, 
-      y: 85 
+      y: 85,
+      details: {
+        powerOutput: 54.2,
+        voltage: 380,
+        temperature: 40.2
+      }
     },
     { 
       id: "qdat", 
       name: "QDAT", 
       isOn: true, 
       x: 10, 
-      y: 85 
+      y: 85,
+      details: {
+        powerOutput: 0,
+        voltage: 220,
+        temperature: 32.6
+      } 
     },
     { 
       id: "qdac-01", 
       name: "QDAC-01", 
       isOn: true, 
       x: 80, 
-      y: 85 
+      y: 85,
+      details: {
+        powerOutput: 27.1,
+        voltage: 380,
+        temperature: 39.8
+      }
     }
   ];
   
@@ -95,8 +122,20 @@ const Map = () => {
     return () => clearInterval(interval);
   }, []);
   
-  const handleInverterClick = (inverter: InverterLocation) => {
+  const handleInverterClick = (inverter: InverterLocation, e?: React.MouseEvent) => {
     setSelectedInverter(inverter);
+    
+    // Se estiver em tela cheia, mostrar popup no local do clique
+    if (isFullscreen && e) {
+      const rect = (e.target as HTMLElement).getBoundingClientRect();
+      setPopupPosition({
+        x: e.clientX,
+        y: e.clientY
+      });
+      setShowPopup(true);
+    } else {
+      setShowPopup(false);
+    }
   };
   
   const toggleFullscreen = () => {
@@ -117,11 +156,28 @@ const Map = () => {
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
+      // Fechar popup quando sair do modo tela cheia
+      if (!document.fullscreenElement) {
+        setShowPopup(false);
+      }
     };
     
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
+  
+  // Fechar popup quando clicar fora dele
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (showPopup && !(e.target as HTMLElement).closest('.popup-info') && 
+          !(e.target as HTMLElement).closest('.map-element')) {
+        setShowPopup(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showPopup]);
   
   return (
     <div className="space-y-6">
@@ -288,22 +344,62 @@ const Map = () => {
                   {inverters.map((inverter) => (
                     <div 
                       key={inverter.id}
-                      className={`absolute w-12 h-12 -ml-6 -mt-6 rounded-full flex items-center justify-center cursor-pointer border-2 ${
+                      className={`absolute w-12 h-12 -ml-6 -mt-6 rounded-full flex items-center justify-center cursor-pointer border-2 map-element ${
                         inverter.isOn ? "bg-green-500 border-green-600" : "bg-red-500 border-red-600"
                       } ${selectedInverter?.id === inverter.id ? "ring-4 ring-blue-300" : ""}`}
                       style={{ left: `${inverter.x}%`, top: `${inverter.y}%` }}
-                      onClick={() => handleInverterClick(inverter)}
+                      onClick={(e) => handleInverterClick(inverter, e)}
                     >
                       <span className="text-white text-xs font-bold">{inverter.name.split(' ')[0]}</span>
                     </div>
                   ))}
+                  
+                  {/* Popup for fullscreen mode */}
+                  {showPopup && selectedInverter && (
+                    <div 
+                      className="absolute z-10 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 min-w-[250px] popup-info"
+                      style={{ 
+                        left: `${popupPosition.x}px`, 
+                        top: `${popupPosition.y}px`,
+                        transform: 'translate(10px, 10px)'
+                      }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <Circle className={`h-3 w-3 ${selectedInverter.isOn ? "fill-green-500" : "fill-red-500"}`} />
+                        <h3 className="font-medium">{selectedInverter.name}</h3>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-2 gap-1">
+                          <span className="text-sm text-muted-foreground">Status:</span>
+                          <span className="text-sm font-medium">{selectedInverter.isOn ? "Ligado" : "Desligado"}</span>
+                        </div>
+                        
+                        {selectedInverter.details && (
+                          <>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-sm text-muted-foreground">Potência:</span>
+                              <span className="text-sm font-medium">{selectedInverter.details.powerOutput} kW</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-sm text-muted-foreground">Tensão:</span>
+                              <span className="text-sm font-medium">{selectedInverter.details.voltage} V</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-1">
+                              <span className="text-sm text-muted-foreground">Temperatura:</span>
+                              <span className="text-sm font-medium">{selectedInverter.details.temperature}°C</span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          {/* Selected inverter details */}
-          {selectedInverter && (
+          {/* Selected inverter details (when not in fullscreen) */}
+          {selectedInverter && !isFullscreen && (
             <Card className="mt-4">
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">

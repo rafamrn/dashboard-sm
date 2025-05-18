@@ -2,31 +2,106 @@
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PowerChart from "./PowerChart";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { 
+  Popover, 
+  PopoverContent, 
+  PopoverTrigger 
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Calendar as CalendarIcon } from "lucide-react";
 
 type Period = "daily" | "monthly" | "annual";
 
 const ChartSelector = () => {
   const [period, setPeriod] = useState<Period>("daily");
+  const [date, setDate] = useState<Date>(new Date());
+  const [month, setMonth] = useState<Date>(new Date());
+  const [year, setYear] = useState<Date>(new Date());
+  
+  // Formatar a exibição conforme o período selecionado
+  const formatDate = () => {
+    switch (period) {
+      case "daily":
+        return format(date, "dd/MM/yyyy");
+      case "monthly":
+        return format(month, "MMMM/yyyy");
+      case "annual":
+        return format(year, "yyyy");
+      default:
+        return "";
+    }
+  };
   
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
         <h3 className="text-lg font-medium">Geração de Energia</h3>
         
-        <Tabs 
-          value={period} 
-          onValueChange={(value) => setPeriod(value as Period)}
-          className="w-full sm:w-auto"
-        >
-          <TabsList className="grid grid-cols-3 w-full sm:w-[300px]">
-            <TabsTrigger value="daily">Diário</TabsTrigger>
-            <TabsTrigger value="monthly">Mensal</TabsTrigger>
-            <TabsTrigger value="annual">Anual</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="outline" 
+                className={cn(
+                  "w-full sm:w-[200px] justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {formatDate()}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              {period === "daily" && (
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(date) => date && setDate(date)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              )}
+              {period === "monthly" && (
+                <Calendar
+                  mode="single"
+                  selected={month}
+                  onSelect={(date) => date && setMonth(date)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                  view="month"
+                />
+              )}
+              {period === "annual" && (
+                <Calendar
+                  mode="single"
+                  selected={year}
+                  onSelect={(date) => date && setYear(date)}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                  view="year"
+                />
+              )}
+            </PopoverContent>
+          </Popover>
+          
+          <Tabs 
+            value={period} 
+            onValueChange={(value) => setPeriod(value as Period)}
+            className="w-full sm:w-auto"
+          >
+            <TabsList className="grid grid-cols-3 w-full sm:w-[300px]">
+              <TabsTrigger value="daily">Diário</TabsTrigger>
+              <TabsTrigger value="monthly">Mensal</TabsTrigger>
+              <TabsTrigger value="annual">Anual</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
       
-      <PowerChart period={period} />
+      <PowerChart period={period} selectedDate={date} selectedMonth={month} selectedYear={year} />
     </div>
   );
 };

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Circle, XCircle } from "lucide-react";
+import { Check, Circle, XCircle, ChevronDown, ChevronUp } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { 
   LineChart, 
   Line, 
@@ -28,12 +33,20 @@ import {
   Legend, 
   ResponsiveContainer 
 } from "recharts";
+import { Checkbox } from "@/components/ui/checkbox";
+
+interface InverterString {
+  id: string;
+  name: string;
+  isSelected: boolean;
+}
 
 interface Inverter {
   id: string;
   name: string;
-  isSelected: boolean;
+  isExpanded: boolean;
   status: "online" | "offline";
+  strings: InverterString[];
 }
 
 interface IVCurveData {
@@ -44,14 +57,52 @@ interface IVCurveData {
 
 const IVCurve = () => {
   const [inverters, setInverters] = useState<Inverter[]>([
-    { id: "inv1", name: "Inversor 01", isSelected: false, status: "online" },
-    { id: "inv2", name: "Inversor 02", isSelected: false, status: "online" },
-    { id: "inv3", name: "Inversor 03", isSelected: false, status: "online" },
-    { id: "inv4", name: "Inversor 04", isSelected: false, status: "offline" },
+    { 
+      id: "inv1", 
+      name: "Inversor 01", 
+      isExpanded: false, 
+      status: "online",
+      strings: [
+        { id: "inv1-st1", name: "String 01", isSelected: false },
+        { id: "inv1-st2", name: "String 02", isSelected: false },
+        { id: "inv1-st3", name: "String 03", isSelected: false },
+      ]
+    },
+    { 
+      id: "inv2", 
+      name: "Inversor 02", 
+      isExpanded: false, 
+      status: "online",
+      strings: [
+        { id: "inv2-st1", name: "String 01", isSelected: false },
+        { id: "inv2-st2", name: "String 02", isSelected: false },
+        { id: "inv2-st3", name: "String 03", isSelected: false },
+      ]
+    },
+    { 
+      id: "inv3", 
+      name: "Inversor 03", 
+      isExpanded: false, 
+      status: "online",
+      strings: [
+        { id: "inv3-st1", name: "String 01", isSelected: false },
+        { id: "inv3-st2", name: "String 02", isSelected: false },
+      ]
+    },
+    { 
+      id: "inv4", 
+      name: "Inversor 04", 
+      isExpanded: false, 
+      status: "offline",
+      strings: [
+        { id: "inv4-st1", name: "String 01", isSelected: false },
+        { id: "inv4-st2", name: "String 02", isSelected: false },
+      ]
+    },
   ]);
   
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedInverter, setSelectedInverter] = useState<Inverter | null>(null);
+  const [selectedStrings, setSelectedStrings] = useState<InverterString[]>([]);
   const [testInProgress, setTestInProgress] = useState(false);
   
   // Mock IV curve data
@@ -81,21 +132,81 @@ const IVCurve = () => {
     irradiance: 850, // Irradiance (W/m²)
   };
   
-  const toggleInverterSelection = (id: string) => {
+  const toggleInverterExpanded = (id: string) => {
     setInverters(
       inverters.map((inverter) => 
         inverter.id === id 
-          ? { ...inverter, isSelected: !inverter.isSelected } 
+          ? { ...inverter, isExpanded: !inverter.isExpanded } 
           : inverter
       )
     );
   };
+
+  const toggleStringSelection = (inverterId: string, stringId: string) => {
+    setInverters(
+      inverters.map((inverter) => {
+        if (inverter.id === inverterId) {
+          return {
+            ...inverter,
+            strings: inverter.strings.map((string) => 
+              string.id === stringId 
+                ? { ...string, isSelected: !string.isSelected }
+                : string
+            )
+          };
+        }
+        return inverter;
+      })
+    );
+  };
+  
+  const selectAllStrings = (inverterId: string) => {
+    setInverters(
+      inverters.map((inverter) => {
+        if (inverter.id === inverterId && inverter.status === "online") {
+          return {
+            ...inverter,
+            strings: inverter.strings.map((string) => ({ ...string, isSelected: true }))
+          };
+        }
+        return inverter;
+      })
+    );
+  };
+
+  const unselectAllStrings = (inverterId: string) => {
+    setInverters(
+      inverters.map((inverter) => {
+        if (inverter.id === inverterId) {
+          return {
+            ...inverter,
+            strings: inverter.strings.map((string) => ({ ...string, isSelected: false }))
+          };
+        }
+        return inverter;
+      })
+    );
+  };
   
   const startTest = () => {
-    const selectedInv = inverters.find(inv => inv.isSelected);
-    if (!selectedInv) return;
+    // Recolher todas as strings selecionadas
+    const strings: InverterString[] = [];
+    inverters.forEach(inverter => {
+      if (inverter.status === "online") {
+        inverter.strings.forEach(string => {
+          if (string.isSelected) {
+            strings.push({ 
+              ...string, 
+              name: `${inverter.name} - ${string.name}` 
+            });
+          }
+        });
+      }
+    });
     
-    setSelectedInverter(selectedInv);
+    if (strings.length === 0) return;
+    
+    setSelectedStrings(strings);
     setDialogOpen(true);
     setTestInProgress(true);
     
@@ -105,7 +216,9 @@ const IVCurve = () => {
     }, 2000);
   };
   
-  const hasSelectedInverters = inverters.some(inverter => inverter.isSelected);
+  const hasSelectedStrings = inverters.some(inverter => 
+    inverter.strings.some(string => string.isSelected)
+  );
   
   return (
     <div className="space-y-6">
@@ -118,38 +231,96 @@ const IVCurve = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Selecione o Inversor para Teste</CardTitle>
+          <CardTitle>Selecione o Inversor e Strings para Teste</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4">
+          <div className="space-y-4">
             {inverters.map((inverter) => (
-              <div 
+              <Collapsible
                 key={inverter.id}
-                className={`p-4 border rounded-lg flex items-center justify-between cursor-pointer transition-colors
-                  ${inverter.isSelected ? "border-primary bg-primary/5" : ""}
-                  ${inverter.status === "offline" ? "opacity-60" : "hover:bg-gray-50 dark:hover:bg-gray-800"}
-                `}
-                onClick={() => inverter.status === "online" && toggleInverterSelection(inverter.id)}
+                open={inverter.isExpanded}
+                onOpenChange={() => inverter.status === "online" && toggleInverterExpanded(inverter.id)}
+                className={`border rounded-lg ${
+                  inverter.status === "offline" ? "opacity-60" : ""
+                }`}
               >
-                <div className="flex items-center gap-3">
-                  <Circle 
-                    className={`h-4 w-4 ${
-                      inverter.status === "online" ? "fill-green-500" : "fill-gray-400"
-                    }`} 
-                  />
-                  <span>{inverter.name}</span>
-                  {inverter.status === "offline" && (
-                    <span className="text-sm text-muted-foreground ml-2">(Offline)</span>
+                <div className="p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Circle 
+                      className={`h-4 w-4 ${
+                        inverter.status === "online" ? "fill-green-500" : "fill-gray-400"
+                      }`} 
+                    />
+                    <span className="font-medium">{inverter.name}</span>
+                    {inverter.status === "offline" && (
+                      <span className="text-sm text-muted-foreground ml-2">(Offline)</span>
+                    )}
+                  </div>
+                  
+                  {inverter.status === "online" && (
+                    <CollapsibleTrigger asChild>
+                      <Button variant="ghost" size="sm">
+                        {inverter.isExpanded ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </CollapsibleTrigger>
                   )}
                 </div>
-                {inverter.isSelected && <Check className="h-5 w-5 text-primary" />}
-              </div>
+                
+                <CollapsibleContent>
+                  <div className="border-t px-4 py-3">
+                    <div className="flex justify-between mb-3">
+                      <span className="text-sm font-medium">Strings disponíveis:</span>
+                      <div className="flex space-x-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => selectAllStrings(inverter.id)}
+                        >
+                          Selecionar todas
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => unselectAllStrings(inverter.id)}
+                        >
+                          Limpar seleção
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {inverter.strings.map((string) => (
+                        <div 
+                          key={string.id}
+                          className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+                        >
+                          <Checkbox 
+                            id={string.id} 
+                            checked={string.isSelected} 
+                            onCheckedChange={() => toggleStringSelection(inverter.id, string.id)}
+                          />
+                          <label 
+                            htmlFor={string.id}
+                            className="text-sm flex-grow cursor-pointer"
+                          >
+                            {string.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             ))}
           </div>
           
           <Button 
             className="w-full mt-6" 
-            disabled={!hasSelectedInverters}
+            disabled={!hasSelectedStrings}
             onClick={startTest}
           >
             Iniciar Teste
@@ -162,14 +333,14 @@ const IVCurve = () => {
           <DialogHeader>
             <DialogTitle>
               {testInProgress 
-                ? `Testando ${selectedInverter?.name}...`
-                : `Resultado da Curva IV - ${selectedInverter?.name}`
+                ? "Testando Strings Selecionadas..."
+                : "Resultado da Curva IV"
               }
             </DialogTitle>
             <DialogDescription>
               {testInProgress 
-                ? "Coletando dados do inversor. Por favor, aguarde..."
-                : "Análise completa da curva IV e dados técnicos"
+                ? "Coletando dados das strings. Por favor, aguarde..."
+                : `Análise completa da curva IV e dados técnicos para ${selectedStrings.length} string(s)`
               }
             </DialogDescription>
           </DialogHeader>
@@ -184,7 +355,9 @@ const IVCurve = () => {
               {/* IV Curve Chart */}
               <Card>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Curva IV</CardTitle>
+                  <CardTitle className="text-lg">
+                    Curva IV - {selectedStrings.map(s => s.name).join(", ")}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
