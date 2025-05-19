@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Sun, BatteryFull, Gauge, ArrowUp } from "lucide-react";
 import InverterCard, { InverterData } from "@/components/dashboard/InverterCard";
@@ -78,12 +77,6 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <StatusGauge 
-            value={powerOutput} 
-            maxValue={100} 
-            label="Nível de Produção" 
-            unit="%" 
-          />
           <Badge 
             className={`text-lg h-10 px-4 ${
               systemStatus === "OPERANDO" ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
@@ -100,11 +93,21 @@ const Dashboard = () => {
           <ChartSelector />
         </div>
         <div>
-          <PerformancePieChart 
-            title="Performance Diária"
-            actualValue={actualPerformance}
-            expectedValue={expectedPerformance}
-          />
+          <div className="border rounded-lg p-6 bg-card text-card-foreground shadow-sm">
+            <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">Performance Diária</h3>
+            <div className="flex flex-col items-center space-y-6">
+              <StatusGauge 
+                value={powerOutput} 
+                maxValue={100} 
+                label="Nível de Produção" 
+                unit="%" 
+              />
+              <PerformancePieChart 
+                actualValue={actualPerformance}
+                expectedValue={expectedPerformance}
+              />
+            </div>
+          </div>
         </div>
       </div>
       

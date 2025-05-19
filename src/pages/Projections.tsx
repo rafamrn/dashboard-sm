@@ -4,8 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, LegendProps } from "recharts";
 
 type MonthProjection = {
   month: string;
@@ -72,7 +70,7 @@ const Projections = () => {
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
             <CardTitle>Metas de Geração</CardTitle>
@@ -113,30 +111,6 @@ const Projections = () => {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Comparativo Anual</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer 
-              config={{
-                projected: { theme: { light: '#3b82f6', dark: '#60a5fa' } },
-                actual: { theme: { light: '#22c55e', dark: '#4ade80' } }
-              }}
-              className="h-80"
-            >
-              <BarChart data={projections}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-                <XAxis dataKey="month" />
-                <YAxis unit=" kWh" />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="projected" name="projected" fill="var(--color-projected)" barSize={12} />
-                <Bar dataKey="actual" name="actual" fill="var(--color-actual)" barSize={12} />
-              </BarChart>
-            </ChartContainer>
           </CardContent>
         </Card>
       </div>
