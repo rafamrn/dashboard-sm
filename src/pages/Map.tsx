@@ -4,8 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Circle, Maximize2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight } from "lucide-react";
 
 interface InverterLocation {
   id: string;
@@ -18,12 +16,6 @@ interface InverterLocation {
     voltage: number;
     temperature: number;
   };
-  strings?: {
-    id: string;
-    name: string;
-    voltage: number;
-    current: number;
-  }[];
 }
 
 const Map = () => {
@@ -32,9 +24,8 @@ const Map = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
   
-  // Mock data for inverter locations with strings
+  // Mock data for inverter locations
   const inverters: InverterLocation[] = [
     { 
       id: "inv1", 
@@ -46,12 +37,7 @@ const Map = () => {
         powerOutput: 27.5,
         voltage: 380,
         temperature: 42.3
-      },
-      strings: [
-        { id: "inv1-str1", name: "String 1.1", voltage: 595.3, current: 8.2 },
-        { id: "inv1-str2", name: "String 1.2", voltage: 594.1, current: 8.1 },
-        { id: "inv1-str3", name: "String 1.3", voltage: 596.2, current: 8.3 }
-      ]
+      }
     },
     { 
       id: "inv2", 
@@ -63,12 +49,7 @@ const Map = () => {
         powerOutput: 27.3,
         voltage: 380,
         temperature: 43.1
-      },
-      strings: [
-        { id: "inv2-str1", name: "String 2.1", voltage: 593.8, current: 8.1 },
-        { id: "inv2-str2", name: "String 2.2", voltage: 595.7, current: 8.2 },
-        { id: "inv2-str3", name: "String 2.3", voltage: 594.2, current: 8.0 }
-      ]
+      }
     },
     { 
       id: "string1", 
@@ -155,14 +136,6 @@ const Map = () => {
     } else {
       setShowPopup(false);
     }
-  };
-
-  const toggleItemExpanded = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedItems(prev => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
   };
   
   const toggleFullscreen = () => {
@@ -468,61 +441,19 @@ const Map = () => {
             <CardContent className="pt-6">
               <div className="space-y-4">
                 {inverters.map((inverter) => (
-                  <Collapsible 
+                  <div 
                     key={inverter.id}
-                    open={expandedItems[inverter.id]}
-                    className="border rounded-lg"
+                    className="p-3 border rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                    onClick={() => handleInverterClick(inverter)}
                   >
-                    <CollapsibleTrigger asChild>
-                      <div 
-                        className="p-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                        onClick={(e) => inverter.strings ? toggleItemExpanded(inverter.id, e) : handleInverterClick(inverter)}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Circle className={`h-4 w-4 ${inverter.isOn ? "fill-green-500" : "fill-red-500"}`} />
-                          <span>{inverter.name}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <div className="text-sm text-muted-foreground mr-2">
-                            {inverter.isOn ? "Ligado" : "Desligado"}
-                          </div>
-                          {inverter.strings && (
-                            <div className="flex items-center">
-                              {expandedItems[inverter.id] ? (
-                                <ChevronDown className="h-4 w-4" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4" />
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CollapsibleTrigger>
-                    
-                    {inverter.strings && (
-                      <CollapsibleContent>
-                        <div className="p-3 pt-0">
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-md p-2">
-                            <div className="grid grid-cols-3 gap-1 mb-2 px-2 text-sm font-medium text-muted-foreground">
-                              <div>String</div>
-                              <div>Tensão</div>
-                              <div>Corrente</div>
-                            </div>
-                            {inverter.strings.map((string) => (
-                              <div 
-                                key={string.id} 
-                                className="grid grid-cols-3 gap-1 py-2 px-2 border-t border-gray-200 dark:border-gray-700"
-                              >
-                                <div className="font-medium">{string.name}</div>
-                                <div>{string.voltage.toFixed(1)} V</div>
-                                <div>{string.current.toFixed(2)} A</div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </CollapsibleContent>
-                    )}
-                  </Collapsible>
+                    <div className="flex items-center gap-3">
+                      <Circle className={`h-4 w-4 ${inverter.isOn ? "fill-green-500" : "fill-red-500"}`} />
+                      <span>{inverter.name}</span>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {inverter.isOn ? "Ligado" : "Desligado"}
+                    </div>
+                  </div>
                 ))}
               </div>
             </CardContent>
