@@ -73,10 +73,10 @@ const PowerChart = ({ period, selectedDate, selectedMonth, selectedYear }: Power
             config={{
               power: { theme: { light: '#3b82f6', dark: '#60a5fa' } }
             }}
-            className="h-80"
+            className="h-[300px] w-full"
           >
-            <ResponsiveContainer>
-              <AreaChart data={chartData}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="powerGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-power)" stopOpacity={0.8}/>
@@ -106,10 +106,10 @@ const PowerChart = ({ period, selectedDate, selectedMonth, selectedYear }: Power
             config={{
               energy: { theme: { light: '#3b82f6', dark: '#60a5fa' } }
             }}
-            className="h-80"
+            className="h-[300px] w-full"
           >
-            <ResponsiveContainer>
-              <AreaChart data={chartData}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="energyGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-energy)" stopOpacity={0.8}/>
@@ -139,10 +139,10 @@ const PowerChart = ({ period, selectedDate, selectedMonth, selectedYear }: Power
             config={{
               energy: { theme: { light: '#3b82f6', dark: '#60a5fa' } }
             }}
-            className="h-80"
+            className="h-[300px] w-full"
           >
-            <ResponsiveContainer>
-              <AreaChart data={chartData}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                 <defs>
                   <linearGradient id="energyGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-energy)" stopOpacity={0.8}/>
@@ -185,7 +185,7 @@ const PowerChart = ({ period, selectedDate, selectedMonth, selectedYear }: Power
   };
   
   return (
-    <Card>
+    <Card className="w-full h-full">
       <CardHeader className="pb-2">
         <CardTitle>{getChartTitle()}</CardTitle>
       </CardHeader>

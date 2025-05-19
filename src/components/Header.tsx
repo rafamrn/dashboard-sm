@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart } from "lucide-react";
+import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileDown } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 
 const Header = () => {
@@ -93,6 +94,17 @@ const Header = () => {
             <Link to="/performance" className="flex items-center gap-2">
               <LineChart className="h-4 w-4" />
               Performance
+            </Link>
+          </Button>
+          
+          <Button
+            variant={isActive("/reports") ? "secondary" : "ghost"}
+            size="sm"
+            asChild
+          >
+            <Link to="/reports" className="flex items-center gap-2">
+              <FileDown className="h-4 w-4" />
+              Relatórios
             </Link>
           </Button>
           

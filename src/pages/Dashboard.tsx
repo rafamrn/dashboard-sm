@@ -1,16 +1,21 @@
+
 import React, { useState, useEffect } from "react";
-import { Sun, BatteryFull, Gauge, ArrowUp } from "lucide-react";
+import { Sun, BatteryFull, Gauge, ArrowUp, Thermometer } from "lucide-react";
 import InverterCard, { InverterData } from "@/components/dashboard/InverterCard";
 import StatusGauge from "@/components/dashboard/StatusGauge";
 import StringBox from "@/components/dashboard/StringBox";
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import ChartSelector from "@/components/dashboard/ChartSelector";
 import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
+import PowerGauge from "@/components/dashboard/PowerGauge";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Dashboard = () => {
   const [systemStatus, setSystemStatus] = useState("OPERANDO");
   const [powerOutput, setPowerOutput] = useState(75);
+  const [temperature, setTemperature] = useState(42.5);
+  const [irradiance, setIrradiance] = useState(780);
   
   // Simulate real-time data updates
   useEffect(() => {
@@ -19,7 +24,17 @@ const Dashboard = () => {
         const variation = Math.random() * 6 - 3;
         return Math.max(0, Math.min(100, prev + variation));
       });
-    }, 5000);
+      
+      setTemperature((prev) => {
+        const variation = Math.random() * 2 - 1;
+        return Math.max(25, Math.min(60, prev + variation));
+      });
+      
+      setIrradiance((prev) => {
+        const variation = Math.random() * 40 - 20;
+        return Math.max(200, Math.min(1200, prev + variation));
+      });
+    }, 3000);
     
     return () => clearInterval(interval);
   }, []);
@@ -87,28 +102,52 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Energy charts and performance */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2">
-          <ChartSelector />
-        </div>
-        <div>
-          <div className="border rounded-lg p-6 bg-card text-card-foreground shadow-sm">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">Performance Diária</h3>
-            <div className="flex flex-col items-center space-y-6">
-              <StatusGauge 
-                value={powerOutput} 
-                maxValue={100} 
-                label="Nível de Produção" 
-                unit="%" 
-              />
-              <PerformancePieChart 
-                actualValue={actualPerformance}
-                expectedValue={expectedPerformance}
-              />
-            </div>
-          </div>
-        </div>
+      {/* Weather Station Data */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="col-span-1 lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle>Estação Meteorológica</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col md:flex-row justify-around gap-4">
+            <PowerGauge 
+              value={temperature}
+              maxValue={80}
+              label="Temperatura do Módulo" 
+              unit="°C"
+              color="#ef4444" 
+            />
+            <PowerGauge 
+              value={irradiance}
+              maxValue={1200}
+              label="Irradiância" 
+              unit=" W/m²"
+              color="#f59e0b" 
+            />
+          </CardContent>
+        </Card>
+        
+        <Card className="col-span-1 lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle>Performance Diária</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-4">
+            <PowerGauge 
+              value={powerOutput} 
+              maxValue={100} 
+              label="Nível de Produção" 
+              unit="%" 
+            />
+            <PerformancePieChart 
+              actualValue={actualPerformance}
+              expectedValue={expectedPerformance}
+            />
+          </CardContent>
+        </Card>
+      </div>
+      
+      {/* Energy charts */}
+      <div className="grid md:grid-cols-1">
+        <ChartSelector />
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
