@@ -210,7 +210,7 @@ const IVCurve = () => {
       </Card>
       
       <Dialog open={showResults} onOpenChange={setShowResults}>
-        <DialogContent className="max-w-5xl w-full max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex justify-between items-center">
               <span>Resultados do Teste de Curva I-V</span>
@@ -231,7 +231,7 @@ const IVCurve = () => {
                       <CardTitle className="text-md">Curva I-V</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="h-[300px]">
+                      <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={result.data}>
                             <CartesianGrid strokeDasharray="3 3" />
@@ -262,7 +262,7 @@ const IVCurve = () => {
                       <CardTitle className="text-md">Curva P-V</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <div className="h-[300px]">
+                      <div className="h-[250px]">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={result.data}>
                             <CartesianGrid strokeDasharray="3 3" />
@@ -322,7 +322,7 @@ const IVCurve = () => {
             ))}
           </div>
           
-          <DialogFooter className="print:hidden">
+          <DialogFooter className="print:hidden mt-4">
             <Button className="w-full md:w-auto gap-2" onClick={downloadReport}>
               <FileDown className="h-4 w-4" /> Baixar Relatório
             </Button>

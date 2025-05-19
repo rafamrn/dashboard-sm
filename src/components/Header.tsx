@@ -2,14 +2,25 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileDown } from "lucide-react";
+import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileDown, Clock } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
+import { format } from "date-fns";
 
 const Header = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  
+  // Update current time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
   
   // Check for fullscreen changes triggered by other methods (Esc key, etc.)
   useEffect(() => {
@@ -43,6 +54,10 @@ const Header = () => {
       document.documentElement.classList.remove('dark');
     }
   };
+
+  // Format date and time
+  const formattedDate = format(currentDateTime, "dd/MM/yyyy");
+  const formattedTime = format(currentDateTime, "HH:mm:ss");
   
   return (
     <header className="sticky top-0 z-10 bg-primary text-primary-foreground shadow-md">
@@ -120,31 +135,39 @@ const Header = () => {
           </Button>
         </nav>
         
-        <div className="flex items-center space-x-2">
-          <Toggle 
-            pressed={isFullscreen} 
-            onPressedChange={toggleFullscreen}
-            size="sm" 
-            aria-label="Toggle fullscreen"
-          >
-            {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
-          </Toggle>
+        <div className="flex items-center space-x-4">
+          <div className="hidden md:flex items-center text-sm">
+            <Clock className="h-4 w-4 mr-1" />
+            <span className="mr-2">{formattedTime}</span>
+            <span>{formattedDate}</span>
+          </div>
           
-          <Toggle 
-            pressed={isDarkMode} 
-            onPressedChange={toggleTheme}
-            size="sm" 
-            aria-label="Toggle theme"
-          >
-            {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </Toggle>
-          
-          <Button variant="ghost" size="sm" className="flex items-center gap-2" asChild>
-            <Link to="/">
-              <LogOut className="h-4 w-4" />
-              <span className="hidden md:inline">Sair</span>
-            </Link>
-          </Button>
+          <div className="flex items-center space-x-2">
+            <Toggle 
+              pressed={isFullscreen} 
+              onPressedChange={toggleFullscreen}
+              size="sm" 
+              aria-label="Toggle fullscreen"
+            >
+              {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+            </Toggle>
+            
+            <Toggle 
+              pressed={isDarkMode} 
+              onPressedChange={toggleTheme}
+              size="sm" 
+              aria-label="Toggle theme"
+            >
+              {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+            </Toggle>
+            
+            <Button variant="ghost" size="sm" className="flex items-center gap-2" asChild>
+              <Link to="/">
+                <LogOut className="h-4 w-4" />
+                <span className="hidden md:inline">Sair</span>
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </header>

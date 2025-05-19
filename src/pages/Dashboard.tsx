@@ -102,48 +102,23 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Weather Station Data */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="col-span-1 lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle>Estação Meteorológica</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col md:flex-row justify-around gap-4">
-            <PowerGauge 
-              value={temperature}
-              maxValue={80}
-              label="Temperatura do Módulo" 
-              unit="°C"
-              color="#ef4444" 
-            />
-            <PowerGauge 
-              value={irradiance}
-              maxValue={1200}
-              label="Irradiância" 
-              unit=" W/m²"
-              color="#f59e0b" 
-            />
-          </CardContent>
-        </Card>
-        
-        <Card className="col-span-1 lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle>Performance Diária</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
-            <PowerGauge 
-              value={powerOutput} 
-              maxValue={100} 
-              label="Nível de Produção" 
-              unit="%" 
-            />
-            <PerformancePieChart 
-              actualValue={actualPerformance}
-              expectedValue={expectedPerformance}
-            />
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="col-span-1">
+        <CardHeader className="pb-2">
+          <CardTitle>Performance Diária</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col md:flex-row items-center justify-around gap-4">
+          <PowerGauge 
+            value={powerOutput} 
+            maxValue={100} 
+            label="Nível de Produção" 
+            unit="%" 
+          />
+          <PerformancePieChart 
+            actualValue={actualPerformance}
+            expectedValue={expectedPerformance}
+          />
+        </CardContent>
+      </Card>
       
       {/* Energy charts */}
       <div className="grid md:grid-cols-1">
@@ -211,6 +186,29 @@ const Dashboard = () => {
         <StringBox title="String Box 01" data={stringBox1Data} />
         <StringBox title="String Box 02" data={stringBox2Data} />
       </div>
+      
+      {/* Weather Station Data at the bottom */}
+      <Card className="col-span-1">
+        <CardHeader className="pb-2">
+          <CardTitle>Estação Meteorológica</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col md:flex-row justify-around gap-4">
+          <PowerGauge 
+            value={temperature}
+            maxValue={80}
+            label="Temperatura do Módulo" 
+            unit="°C"
+            color="#ef4444" 
+          />
+          <PowerGauge 
+            value={irradiance}
+            maxValue={1200}
+            label="Irradiância" 
+            unit=" W/m²"
+            color="#f59e0b" 
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };
