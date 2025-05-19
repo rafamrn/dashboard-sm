@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PowerChart from "./PowerChart";
@@ -35,6 +34,28 @@ const ChartSelector = () => {
     }
   };
   
+  // Custom month picker
+  const handleMonthSelect = (newDate: Date | undefined) => {
+    if (newDate) {
+      // Keep only month and year, reset day to 1
+      const firstDayOfMonth = new Date(newDate.getFullYear(), newDate.getMonth(), 1);
+      setMonth(firstDayOfMonth);
+    }
+  };
+
+  // Custom year picker
+  const handleYearSelect = (newDate: Date | undefined) => {
+    if (newDate) {
+      // Keep only year, reset month to January and day to 1
+      const firstDayOfYear = new Date(newDate.getFullYear(), 0, 1);
+      setYear(firstDayOfYear);
+    }
+  };
+
+  const getMonthsFromYear = (selectedYear: number) => {
+    return Array.from({ length: 12 }, (_, i) => new Date(selectedYear, i, 1));
+  };
+  
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:justify-between">
@@ -65,24 +86,48 @@ const ChartSelector = () => {
                 />
               )}
               {period === "monthly" && (
-                <Calendar
-                  mode="single"
-                  selected={month}
-                  onSelect={(date) => date && setMonth(date)}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                  view="month"
-                />
+                <div className="p-3">
+                  <div className="text-center font-medium py-2">
+                    {format(month, "yyyy")}
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {Array.from({ length: 12 }, (_, i) => {
+                      const monthDate = new Date(month.getFullYear(), i, 1);
+                      const isSelected = i === month.getMonth();
+                      return (
+                        <Button
+                          key={i}
+                          variant={isSelected ? "default" : "outline"}
+                          className={cn("h-9", isSelected && "bg-primary text-primary-foreground")}
+                          onClick={() => handleMonthSelect(monthDate)}
+                        >
+                          {format(monthDate, "MMM")}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
               {period === "annual" && (
-                <Calendar
-                  mode="single"
-                  selected={year}
-                  onSelect={(date) => date && setYear(date)}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                  view="year"
-                />
+                <div className="p-3">
+                  <div className="grid grid-cols-3 gap-2">
+                    {Array.from({ length: 10 }, (_, i) => {
+                      const yearValue = new Date().getFullYear() - 5 + i;
+                      const yearDate = new Date(yearValue, 0, 1);
+                      const isSelected = yearValue === year.getFullYear();
+                      return (
+                        <Button
+                          key={i}
+                          variant={isSelected ? "default" : "outline"}
+                          className={cn("h-9", isSelected && "bg-primary text-primary-foreground")}
+                          onClick={() => handleYearSelect(yearDate)}
+                        >
+                          {yearValue}
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
             </PopoverContent>
           </Popover>
