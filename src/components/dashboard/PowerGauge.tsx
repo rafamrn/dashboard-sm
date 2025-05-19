@@ -19,7 +19,7 @@ const PowerGauge = ({ value, maxValue, label, unit, color = "#3b82f6" }: PowerGa
   }, [value]);
   
   // Calculate percentage and angle
-  const percentage = (currentValue / maxValue) * 100;
+  const percentage = Math.min((currentValue / maxValue) * 100, 100);
   const angle = (percentage / 100) * 180;
   
   // Calculate arc path
@@ -77,6 +77,7 @@ const PowerGauge = ({ value, maxValue, label, unit, color = "#3b82f6" }: PowerGa
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           key={value}
+          transition={{ duration: 0.5 }}
         >
           {Math.round(currentValue)}{unit}
         </motion.div>
