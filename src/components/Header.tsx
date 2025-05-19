@@ -1,14 +1,26 @@
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart } from "lucide-react";
+import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileText } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
+import { format } from "date-fns";
 
 const Header = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  
+  // Update current date and time every minute
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 60000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   // Check for fullscreen changes triggered by other methods (Esc key, etc.)
   useEffect(() => {
@@ -43,12 +55,21 @@ const Header = () => {
     }
   };
   
+  const formattedDate = format(currentDateTime, "dd/MM/yyyy");
+  const formattedTime = format(currentDateTime, "HH:mm");
+  
   return (
     <header className="sticky top-0 z-10 bg-primary text-primary-foreground shadow-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Sun className="h-6 w-6" />
           <h1 className="text-xl font-bold">SolarMonitor</h1>
+        </div>
+        
+        <div className="hidden md:flex items-center text-sm mr-4">
+          <span className="bg-primary-foreground/20 rounded-lg px-3 py-1">
+            {formattedDate} | {formattedTime}
+          </span>
         </div>
         
         <nav className="hidden md:flex space-x-4">
@@ -93,6 +114,17 @@ const Header = () => {
             <Link to="/performance" className="flex items-center gap-2">
               <LineChart className="h-4 w-4" />
               Performance
+            </Link>
+          </Button>
+          
+          <Button
+            variant={isActive("/reports") ? "secondary" : "ghost"}
+            size="sm"
+            asChild
+          >
+            <Link to="/reports" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Relatórios
             </Link>
           </Button>
           

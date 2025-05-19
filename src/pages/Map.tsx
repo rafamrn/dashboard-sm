@@ -1,9 +1,17 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Circle, Maximize2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import StringDetails from "@/components/map/StringDetails";
+
+interface StringData {
+  id: string;
+  name: string;
+  voltage: number;
+  current: number;
+  power: number;
+}
 
 interface InverterLocation {
   id: string;
@@ -16,6 +24,7 @@ interface InverterLocation {
     voltage: number;
     temperature: number;
   };
+  strings?: StringData[];
 }
 
 const Map = () => {
@@ -24,8 +33,9 @@ const Map = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [showStrings, setShowStrings] = useState(false);
   
-  // Mock data for inverter locations
+  // Mock data for inverter locations with strings
   const inverters: InverterLocation[] = [
     { 
       id: "inv1", 
@@ -37,7 +47,12 @@ const Map = () => {
         powerOutput: 27.5,
         voltage: 380,
         temperature: 42.3
-      }
+      },
+      strings: [
+        { id: "inv1-st1", name: "String 01", voltage: 595.3, current: 4.92, power: 2928.9 },
+        { id: "inv1-st2", name: "String 02", voltage: 594.8, current: 4.85, power: 2884.8 },
+        { id: "inv1-st3", name: "String 03", voltage: 596.1, current: 4.90, power: 2920.9 }
+      ]
     },
     { 
       id: "inv2", 
@@ -49,7 +64,12 @@ const Map = () => {
         powerOutput: 27.3,
         voltage: 380,
         temperature: 43.1
-      }
+      },
+      strings: [
+        { id: "inv2-st1", name: "String 01", voltage: 594.7, current: 4.87, power: 2896.2 },
+        { id: "inv2-st2", name: "String 02", voltage: 595.6, current: 4.91, power: 2924.4 },
+        { id: "inv2-st3", name: "String 03", voltage: 593.9, current: 4.83, power: 2868.5 }
+      ]
     },
     { 
       id: "string1", 
@@ -124,8 +144,9 @@ const Map = () => {
   
   const handleInverterClick = (inverter: InverterLocation, e?: React.MouseEvent) => {
     setSelectedInverter(inverter);
+    setShowStrings(false); // Reset string view
     
-    // Se estiver em tela cheia, mostrar popup no local do clique
+    // If fullscreen, show popup at click location
     if (isFullscreen && e) {
       const rect = (e.target as HTMLElement).getBoundingClientRect();
       setPopupPosition({
@@ -156,7 +177,6 @@ const Map = () => {
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
-      // Fechar popup quando sair do modo tela cheia
       if (!document.fullscreenElement) {
         setShowPopup(false);
       }
@@ -166,7 +186,6 @@ const Map = () => {
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
   
-  // Fechar popup quando clicar fora dele
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (showPopup && !(e.target as HTMLElement).closest('.popup-info') && 
@@ -178,6 +197,10 @@ const Map = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showPopup]);
+  
+  const toggleStringDetails = () => {
+    setShowStrings(!showStrings);
+  };
   
   return (
     <div className="space-y-6">
@@ -431,8 +454,26 @@ const Map = () => {
                     </>
                   )}
                 </div>
+                
+                {selectedInverter.strings && (
+                  <Button 
+                    variant="outline" 
+                    className="w-full mt-4" 
+                    onClick={toggleStringDetails}
+                  >
+                    {showStrings ? "Ocultar Strings" : "Mostrar Strings"}
+                  </Button>
+                )}
               </CardContent>
             </Card>
+          )}
+          
+          {/* String details */}
+          {selectedInverter && selectedInverter.strings && showStrings && !isFullscreen && (
+            <StringDetails 
+              inverterName={selectedInverter.name} 
+              strings={selectedInverter.strings} 
+            />
           )}
         </TabsContent>
         
@@ -454,6 +495,22 @@ const Map = () => {
                       {inverter.isOn ? "Ligado" : "Desligado"}
                     </div>
                   </div>
+                  
+                  {/* Show string details when inverter is selected */}
+                  {selectedInverter?.id === inverter.id && inverter.strings && (
+                    <div className="ml-6 mt-2 p-3 border-l border-gray-200 dark:border-gray-700">
+                      <p className="text-sm font-medium mb-2">Strings:</p>
+                      <div className="space-y-2">
+                        {inverter.strings.map((string) => (
+                          <div key={string.id} className="grid grid-cols-3 gap-2 text-sm">
+                            <span>{string.name}</span>
+                            <span>{string.voltage.toFixed(1)} V</span>
+                            <span>{string.current.toFixed(2)} A</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 ))}
               </div>
             </CardContent>

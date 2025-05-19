@@ -1,8 +1,7 @@
-
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Circle, XCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, Circle, XCircle, ChevronDown, ChevronUp, FilePdf, Printer } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -34,6 +33,7 @@ import {
   ResponsiveContainer 
 } from "recharts";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/components/ui/use-toast";
 
 interface InverterString {
   id: string;
@@ -104,21 +104,32 @@ const IVCurve = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedStrings, setSelectedStrings] = useState<InverterString[]>([]);
   const [testInProgress, setTestInProgress] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
   
-  // Mock IV curve data
-  const mockIVCurveData: IVCurveData[] = [
-    { voltage: 0, current: 9.2, power: 0 },
-    { voltage: 100, current: 9.1, power: 910 },
-    { voltage: 200, current: 9.0, power: 1800 },
-    { voltage: 300, current: 8.8, power: 2640 },
-    { voltage: 400, current: 8.5, power: 3400 },
-    { voltage: 500, current: 7.8, power: 3900 },
-    { voltage: 600, current: 6.5, power: 3900 },
-    { voltage: 700, current: 4.8, power: 3360 },
-    { voltage: 800, current: 2.5, power: 2000 },
-    { voltage: 900, current: 0.5, power: 450 },
-    { voltage: 1000, current: 0, power: 0 },
-  ];
+  // Mock IV curve data generator
+  const generateIVCurveData = (offset: number = 0): IVCurveData[] => {
+    const baseData = [
+      { voltage: 0, current: 9.2 - (offset * 0.1), power: 0 },
+      { voltage: 100, current: 9.1 - (offset * 0.1), power: 910 - (offset * 10) },
+      { voltage: 200, current: 9.0 - (offset * 0.1), power: 1800 - (offset * 20) },
+      { voltage: 300, current: 8.8 - (offset * 0.1), power: 2640 - (offset * 30) },
+      { voltage: 400, current: 8.5 - (offset * 0.1), power: 3400 - (offset * 40) },
+      { voltage: 500, current: 7.8 - (offset * 0.1), power: 3900 - (offset * 50) },
+      { voltage: 600, current: 6.5 - (offset * 0.1), power: 3900 - (offset * 60) },
+      { voltage: 700, current: 4.8 - (offset * 0.1), power: 3360 - (offset * 70) },
+      { voltage: 800, current: 2.5 - (offset * 0.1), power: 2000 - (offset * 80) },
+      { voltage: 900, current: 0.5, power: 450 - (offset * 10) },
+      { voltage: 1000, current: 0, power: 0 },
+    ];
+    
+    return baseData.map(item => ({
+      ...item,
+      power: Math.max(0, item.current * item.voltage)
+    }));
+  };
+  
+  const [ivCurveData, setIvCurveData] = useState<{[key: string]: IVCurveData[]}>({});
   
   // Technical parameters
   const technicalParameters = {
@@ -189,7 +200,7 @@ const IVCurve = () => {
   };
   
   const startTest = () => {
-    // Recolher todas as strings selecionadas
+    // Collect selected strings
     const strings: InverterString[] = [];
     inverters.forEach(inverter => {
       if (inverter.status === "online") {
@@ -210,15 +221,67 @@ const IVCurve = () => {
     setDialogOpen(true);
     setTestInProgress(true);
     
+    // Generate IV curve data for each string
+    const newIvCurveData: {[key: string]: IVCurveData[]} = {};
+    strings.forEach((string, index) => {
+      newIvCurveData[string.id] = generateIVCurveData(index);
+    });
+    setIvCurveData(newIvCurveData);
+    
     // Simulate test completion after 2 seconds
     setTimeout(() => {
       setTestInProgress(false);
     }, 2000);
   };
   
+  const handlePrint = () => {
+    if (printRef.current) {
+      const content = printRef.current;
+      const printWindow = window.open('', '_blank');
+      
+      if (printWindow) {
+        printWindow.document.write(`
+          <html>
+            <head>
+              <title>Relatório de Curva IV</title>
+              <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                h1 { color: #333; }
+                table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+              </style>
+            </head>
+            <body>
+              ${content.innerHTML}
+            </body>
+          </html>
+        `);
+        
+        printWindow.document.close();
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      }
+    }
+  };
+  
+  const handleExportPDF = () => {
+    toast({
+      title: "Exportando PDF",
+      description: "O relatório será baixado em breve."
+    });
+    setTimeout(() => {
+      handlePrint();
+    }, 100);
+  };
+  
   const hasSelectedStrings = inverters.some(inverter => 
     inverter.strings.some(string => string.isSelected)
   );
+  
+  // Chart colors for multiple lines
+  const chartColors = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#0088FE', '#00C49F'];
   
   return (
     <div className="space-y-6">
@@ -351,34 +414,92 @@ const IVCurve = () => {
               <p className="mt-4 text-muted-foreground">Processando dados...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-6">
-              {/* IV Curve Chart */}
+            <div ref={printRef} className="grid grid-cols-1 gap-6">
+              <div className="flex justify-end gap-2 print:hidden">
+                <Button variant="outline" size="sm" onClick={handlePrint}>
+                  <Printer className="h-4 w-4 mr-2" />
+                  Imprimir
+                </Button>
+                <Button size="sm" onClick={handleExportPDF}>
+                  <FilePdf className="h-4 w-4 mr-2" />
+                  Exportar PDF
+                </Button>
+              </div>
+              
+              {/* IV Curve Chart - Combined */}
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg">
-                    Curva IV - {selectedStrings.map(s => s.name).join(", ")}
+                    Curva IV - Comparativo
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart
-                        data={mockIVCurveData}
                         margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="voltage" label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} />
-                        <YAxis yAxisId="left" label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }} />
-                        <YAxis yAxisId="right" orientation="right" label={{ value: 'Potência (W)', angle: -90, position: 'insideRight' }} />
+                        <XAxis 
+                          label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} 
+                          type="number"
+                          domain={[0, 1000]}
+                          allowDataOverflow
+                        />
+                        <YAxis 
+                          yAxisId="left" 
+                          label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }}
+                        />
                         <Tooltip />
                         <Legend />
-                        <Line yAxisId="left" type="monotone" dataKey="current" stroke="#8884d8" name="Corrente" dot={false} />
-                        <Line yAxisId="right" type="monotone" dataKey="power" stroke="#82ca9d" name="Potência" dot={false} />
+                        
+                        {selectedStrings.map((string, index) => (
+                          <Line 
+                            key={string.id}
+                            yAxisId="left" 
+                            type="monotone" 
+                            data={ivCurveData[string.id] || []} 
+                            dataKey="current" 
+                            name={string.name} 
+                            stroke={chartColors[index % chartColors.length]}
+                            dot={false} 
+                          />
+                        ))}
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* Individual IV Curve Charts */}
+              {selectedStrings.map((string, index) => (
+                <Card key={string.id}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">
+                      Curva IV - {string.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[250px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                          data={ivCurveData[string.id] || []}
+                          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="voltage" label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} />
+                          <YAxis yAxisId="left" label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }} />
+                          <YAxis yAxisId="right" orientation="right" label={{ value: 'Potência (W)', angle: -90, position: 'insideRight' }} />
+                          <Tooltip />
+                          <Legend />
+                          <Line yAxisId="left" type="monotone" dataKey="current" stroke={chartColors[index % chartColors.length]} name="Corrente" dot={false} />
+                          <Line yAxisId="right" type="monotone" dataKey="power" stroke="#82ca9d" name="Potência" dot={false} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
               
               {/* Technical Data */}
               <Card>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Sun, BatteryFull, Gauge, ArrowUp } from "lucide-react";
 import InverterCard, { InverterData } from "@/components/dashboard/InverterCard";
@@ -6,6 +7,7 @@ import StringBox from "@/components/dashboard/StringBox";
 import SummaryCard from "@/components/dashboard/SummaryCard";
 import ChartSelector from "@/components/dashboard/ChartSelector";
 import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
+import WeatherStation from "@/components/dashboard/WeatherStation";
 import { Badge } from "@/components/ui/badge";
 
 const Dashboard = () => {
@@ -110,6 +112,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      
+      {/* Weather Station */}
+      <WeatherStation />
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <SummaryCard 
