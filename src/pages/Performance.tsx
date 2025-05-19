@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import InverterOperationChart from "@/components/dashboard/InverterOperationChart";
-import PowerGauge from "@/components/dashboard/PowerGauge";
 
 type Period = "daily" | "monthly" | "annual";
 
@@ -51,7 +50,6 @@ const Performance = () => {
   // Calculate total performance
   const totalActual = inverters.reduce((sum, inv) => sum + inv.actual, 0);
   const totalExpected = inverters.reduce((sum, inv) => sum + inv.expected, 0);
-  const totalPerformancePercent = (totalActual / totalExpected) * 100;
 
   return (
     <div className="space-y-6">
@@ -84,13 +82,7 @@ const Performance = () => {
           <CardHeader className="pb-2">
             <CardTitle>Performance Total</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
-            <PowerGauge 
-              value={Math.round(totalPerformancePercent)} 
-              maxValue={100} 
-              label="Performance da Usina" 
-              unit="%" 
-            />
+          <CardContent>
             <PerformancePieChart 
               title="Usina Completa"
               actualValue={totalActual}
@@ -105,29 +97,16 @@ const Performance = () => {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {inverters.map((inverter) => (
           <div key={inverter.id} className="grid gap-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{inverter.name}</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center gap-4">
-                <PowerGauge 
-                  value={Math.round((inverter.actual / inverter.expected) * 100)} 
-                  maxValue={100} 
-                  label="Performance" 
-                  unit="%" 
-                />
-                <PerformancePieChart
-                  inverterName={inverter.name}
-                  actualValue={inverter.actual}
-                  expectedValue={inverter.expected}
-                />
-                <InverterOperationChart
-                  name={inverter.name}
-                  operationHours={inverter.operationHours}
-                  totalHours={inverter.totalHours}
-                />
-              </CardContent>
-            </Card>
+            <PerformancePieChart
+              inverterName={inverter.name}
+              actualValue={inverter.actual}
+              expectedValue={inverter.expected}
+            />
+            <InverterOperationChart
+              name={inverter.name}
+              operationHours={inverter.operationHours}
+              totalHours={inverter.totalHours}
+            />
           </div>
         ))}
       </div>

@@ -1,8 +1,6 @@
 
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from "@/hooks/use-toast";
 
 interface SummaryCardProps {
   title: string;
@@ -13,81 +11,25 @@ interface SummaryCardProps {
     value: number;
     isPositive: boolean;
   };
-  onClick?: () => void;
 }
 
-const SummaryCard = ({ title, value, icon, description, trend, onClick }: SummaryCardProps) => {
-  const { toast } = useToast();
-  
-  const handleCardClick = () => {
-    if (onClick) {
-      onClick();
-    } else {
-      toast({
-        title: title,
-        description: `Valor atual: ${value}`,
-      });
-    }
-  };
-  
+const SummaryCard = ({ title, value, icon, description, trend }: SummaryCardProps) => {
   return (
-    <Card 
-      className={onClick ? "cursor-pointer transition-all hover:shadow-lg" : ""}
-      onClick={handleCardClick}
-    >
+    <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <motion.div 
-          className="h-4 w-4 text-muted-foreground"
-          whileHover={{ scale: 1.2, rotate: 5 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          {icon}
-        </motion.div>
+        <div className="h-4 w-4 text-muted-foreground">{icon}</div>
       </CardHeader>
       <CardContent>
-        <motion.div 
-          className="text-2xl font-bold"
-          initial={{ opacity: 0.9, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          key={`value-${value}`} // Add key to force animation when value changes
-        >
-          {value}
-        </motion.div>
+        <div className="text-2xl font-bold">{value}</div>
         {description && (
           <p className="text-xs text-muted-foreground">{description}</p>
         )}
-        <AnimatePresence>
-          {trend && (
-            <motion.div 
-              className={`flex items-center mt-1 text-xs ${trend.isPositive ? 'text-green-500' : 'text-red-500'}`}
-              initial={{ opacity: 0, x: -5 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              key={`trend-${trend.value}`} // Add key to force animation when trend changes
-            >
-              {trend.isPositive ? (
-                <motion.span 
-                  initial={{ y: 2 }} 
-                  animate={{ y: [2, -2, 2] }} 
-                  transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-                >
-                  ↑
-                </motion.span>
-              ) : (
-                <motion.span 
-                  initial={{ y: -2 }} 
-                  animate={{ y: [-2, 2, -2] }} 
-                  transition={{ duration: 1.5, repeat: Infinity, repeatType: "reverse" }}
-                >
-                  ↓
-                </motion.span>
-              )} 
-              <span className="ml-1">{trend.value}%</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {trend && (
+          <div className={`flex items-center mt-1 text-xs ${trend.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+            {trend.isPositive ? '↑' : '↓'} {trend.value}%
+          </div>
+        )}
       </CardContent>
     </Card>
   );

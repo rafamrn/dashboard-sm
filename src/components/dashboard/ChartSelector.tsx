@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PowerChart from "./PowerChart";
@@ -52,6 +51,10 @@ const ChartSelector = () => {
       setYear(firstDayOfYear);
     }
   };
+
+  const getMonthsFromYear = (selectedYear: number) => {
+    return Array.from({ length: 12 }, (_, i) => new Date(selectedYear, i, 1));
+  };
   
   return (
     <div className="space-y-4">
@@ -84,37 +87,13 @@ const ChartSelector = () => {
               )}
               {period === "monthly" && (
                 <div className="p-3">
-                  <div className="flex justify-between items-center mb-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => {
-                        const prevYear = new Date(month);
-                        prevYear.setFullYear(month.getFullYear() - 1);
-                        setMonth(prevYear);
-                      }}
-                    >
-                      ←
-                    </Button>
-                    <div className="text-center font-medium">
-                      {format(month, "yyyy")}
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => {
-                        const nextYear = new Date(month);
-                        nextYear.setFullYear(month.getFullYear() + 1);
-                        setMonth(nextYear);
-                      }}
-                    >
-                      →
-                    </Button>
+                  <div className="text-center font-medium py-2">
+                    {format(month, "yyyy")}
                   </div>
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {Array.from({ length: 12 }, (_, i) => {
                       const monthDate = new Date(month.getFullYear(), i, 1);
-                      const isSelected = i === month.getMonth() && month.getFullYear() === monthDate.getFullYear();
+                      const isSelected = i === month.getMonth();
                       return (
                         <Button
                           key={i}
