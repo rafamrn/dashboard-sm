@@ -20,20 +20,35 @@ import {
   DialogTitle,
   DialogClose
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/components/ui/use-toast";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { 
   FileText, 
   AlertTriangle, 
   CheckCircle, 
   Clock, 
-  Calendar, 
+  Calendar as CalendarIcon, 
   Filter, 
   Plus,
-  Save
+  Save,
+  Trash2
 } from "lucide-react";
 
 // Mock data for service orders
@@ -45,6 +60,7 @@ const mockServiceOrders = [
     priority: "Alta",
     status: "Em andamento",
     createdAt: "2025-05-15T14:30:00",
+    scheduledDate: "2025-05-20T10:00:00",
     assignedTo: "Técnico João Silva",
     description: "Inversor não está se comunicando com o sistema de monitoramento."
   },
@@ -55,6 +71,7 @@ const mockServiceOrders = [
     priority: "Média",
     status: "Agendado",
     createdAt: "2025-05-16T09:15:00",
+    scheduledDate: "2025-05-25T09:00:00",
     assignedTo: "Técnico Pedro Santos",
     description: "Manutenção preventiva mensal da String Box 02."
   },
@@ -65,6 +82,7 @@ const mockServiceOrders = [
     priority: "Baixa",
     status: "Concluído",
     createdAt: "2025-05-10T11:00:00",
+    scheduledDate: "2025-05-12T08:00:00",
     assignedTo: "Equipe de Limpeza",
     description: "Limpeza programada dos módulos fotovoltaicos do setor A."
   },
@@ -75,6 +93,7 @@ const mockServiceOrders = [
     priority: "Alta",
     status: "Pendente",
     createdAt: "2025-05-18T16:45:00",
+    scheduledDate: "2025-05-22T14:00:00",
     assignedTo: "Não atribuído",
     description: "Fusível queimado na String A do String Box 01."
   },
@@ -85,6 +104,7 @@ const mockServiceOrders = [
     priority: "Média",
     status: "Em andamento",
     createdAt: "2025-05-17T13:20:00",
+    scheduledDate: "2025-05-21T11:30:00",
     assignedTo: "Técnico Roberto Alves",
     description: "Verificar alta temperatura registrada no Inversor 03 nas últimas 24 horas."
   },
@@ -95,6 +115,7 @@ const ServiceOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [orderData, setOrderData] = useState(mockServiceOrders);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [newOrder, setNewOrder] = useState({
     id: "",
     title: "",
@@ -102,6 +123,7 @@ const ServiceOrders = () => {
     priority: "Média",
     status: "Pendente",
     createdAt: "",
+    scheduledDate: new Date(),
     assignedTo: "",
     description: ""
   });
@@ -120,6 +142,15 @@ const ServiceOrders = () => {
       ...newOrder,
       [name]: value
     });
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    if (date) {
+      setNewOrder({
+        ...newOrder,
+        scheduledDate: date
+      });
+    }
   };
 
   const generateOrderId = () => {
@@ -148,6 +179,7 @@ const ServiceOrders = () => {
       ...newOrder,
       id: orderId,
       createdAt: currentDate,
+      scheduledDate: newOrder.scheduledDate.toISOString(),
       status: newOrder.status || "Pendente"
     };
 
@@ -163,6 +195,7 @@ const ServiceOrders = () => {
       priority: "Média",
       status: "Pendente",
       createdAt: "",
+      scheduledDate: new Date(),
       assignedTo: "",
       description: ""
     });
@@ -178,6 +211,21 @@ const ServiceOrders = () => {
     
     // Select the newly created order
     setSelectedOrder(orderId);
+  };
+
+  const handleDeleteOrder = () => {
+    if (selectedOrder) {
+      const updatedOrders = orderData.filter(order => order.id !== selectedOrder);
+      setOrderData(updatedOrders);
+      setDeleteDialogOpen(false);
+      setSelectedOrder(null);
+      
+      toast({
+        title: "Ordem de serviço excluída",
+        description: `Ordem ${selectedOrder} foi excluída com sucesso.`,
+        variant: "default"
+      });
+    }
   };
 
   const filterOrders = (status?: string) => {
@@ -331,6 +379,38 @@ const ServiceOrders = () => {
                 </Select>
               </div>
             </div>
+
+            {/* Date Picker */}
+            <div className="space-y-2">
+              <Label>Data de Agendamento</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !newOrder.scheduledDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {newOrder.scheduledDate ? (
+                      format(newOrder.scheduledDate, "dd/MM/yyyy")
+                    ) : (
+                      <span>Selecione uma data</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={newOrder.scheduledDate}
+                    onSelect={handleDateChange}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
             
             <div className="space-y-2">
               <Label htmlFor="assignedTo">Responsável</Label>
@@ -371,6 +451,27 @@ const ServiceOrders = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Ordem de Serviço</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta ordem de serviço? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteOrder}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid grid-cols-4 md:w-[600px]">
@@ -442,8 +543,13 @@ const ServiceOrders = () => {
                           
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 text-sm">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                               <span>Criada em: {formatDate(order.createdAt)}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm">
+                              <Clock className="h-4 w-4 text-muted-foreground" />
+                              <span>Agendada para: {formatDate(order.scheduledDate)}</span>
                             </div>
                             
                             <div className="border-t pt-2">
@@ -468,11 +574,19 @@ const ServiceOrders = () => {
                           </div>
                           
                           <div className="pt-4 flex gap-3">
-                            <Button variant="outline" size="sm" className="w-full">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <FileText className="h-4 w-4 mr-2" />
                               Relatório
                             </Button>
-                            <Button variant="default" size="sm" className="w-full">
+                            <Button 
+                              variant="default" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               {order.status === "Concluído" ? (
                                 <>
                                   <CheckCircle className="h-4 w-4 mr-2" />
@@ -486,6 +600,16 @@ const ServiceOrders = () => {
                               )}
                             </Button>
                           </div>
+                          
+                          <Button 
+                            variant="destructive" 
+                            size="sm" 
+                            className="w-full mt-2"
+                            onClick={() => setDeleteDialogOpen(true)}
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Excluir Ordem
+                          </Button>
                         </>
                       );
                     })()}
@@ -569,8 +693,13 @@ const ServiceOrders = () => {
                           
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 text-sm">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                               <span>Criada em: {formatDate(order.createdAt)}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm">
+                              <Clock className="h-4 w-4 text-muted-foreground" />
+                              <span>Agendada para: {formatDate(order.scheduledDate)}</span>
                             </div>
                             
                             <div className="border-t pt-2">
@@ -595,11 +724,19 @@ const ServiceOrders = () => {
                           </div>
                           
                           <div className="pt-4 flex gap-3">
-                            <Button variant="outline" size="sm" className="w-full">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <FileText className="h-4 w-4 mr-2" />
                               Relatório
                             </Button>
-                            <Button variant="default" size="sm" className="w-full">
+                            <Button 
+                              variant="default" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <Clock className="h-4 w-4 mr-2" />
                               Atualizar
                             </Button>
@@ -689,8 +826,13 @@ const ServiceOrders = () => {
                           
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 text-sm">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                               <span>Criada em: {formatDate(order.createdAt)}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm">
+                              <Clock className="h-4 w-4 text-muted-foreground" />
+                              <span>Agendada para: {formatDate(order.scheduledDate)}</span>
                             </div>
                             
                             <div className="border-t pt-2">
@@ -715,11 +857,19 @@ const ServiceOrders = () => {
                           </div>
                           
                           <div className="pt-4 flex gap-3">
-                            <Button variant="outline" size="sm" className="w-full">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <FileText className="h-4 w-4 mr-2" />
                               Relatório
                             </Button>
-                            <Button variant="default" size="sm" className="w-full">
+                            <Button 
+                              variant="default" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <Clock className="h-4 w-4 mr-2" />
                               Atualizar
                             </Button>
@@ -809,8 +959,13 @@ const ServiceOrders = () => {
                           
                           <div className="space-y-3">
                             <div className="flex items-center gap-2 text-sm">
-                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                               <span>Criada em: {formatDate(order.createdAt)}</span>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm">
+                              <Clock className="h-4 w-4 text-muted-foreground" />
+                              <span>Agendada para: {formatDate(order.scheduledDate)}</span>
                             </div>
                             
                             <div className="border-t pt-2">
@@ -835,11 +990,19 @@ const ServiceOrders = () => {
                           </div>
                           
                           <div className="pt-4 flex gap-3">
-                            <Button variant="outline" size="sm" className="w-full">
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <FileText className="h-4 w-4 mr-2" />
                               Relatório
                             </Button>
-                            <Button variant="default" size="sm" className="w-full">
+                            <Button 
+                              variant="default" 
+                              size="sm" 
+                              className="w-full"
+                            >
                               <CheckCircle className="h-4 w-4 mr-2" />
                               Concluído
                             </Button>
