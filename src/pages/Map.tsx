@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Circle, Maximize2 } from "lucide-react";
@@ -482,35 +483,42 @@ const Map = () => {
             <CardContent className="pt-6">
               <div className="space-y-4">
                 {inverters.map((inverter) => (
-                  <div 
-                    key={inverter.id}
-                    className="p-3 border rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
-                    onClick={() => handleInverterClick(inverter)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Circle className={`h-4 w-4 ${inverter.isOn ? "fill-green-500" : "fill-red-500"}`} />
-                      <span>{inverter.name}</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {inverter.isOn ? "Ligado" : "Desligado"}
-                    </div>
-                  </div>
-                  
-                  {/* Show string details when inverter is selected */}
-                  {selectedInverter?.id === inverter.id && inverter.strings && (
-                    <div className="ml-6 mt-2 p-3 border-l border-gray-200 dark:border-gray-700">
-                      <p className="text-sm font-medium mb-2">Strings:</p>
-                      <div className="space-y-2">
-                        {inverter.strings.map((string) => (
-                          <div key={string.id} className="grid grid-cols-3 gap-2 text-sm">
-                            <span>{string.name}</span>
-                            <span>{string.voltage.toFixed(1)} V</span>
-                            <span>{string.current.toFixed(2)} A</span>
-                          </div>
-                        ))}
+                  <React.Fragment key={inverter.id}>
+                    <div 
+                      className="p-3 border rounded-lg flex justify-between items-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800"
+                      onClick={() => {
+                        if (selectedInverter?.id === inverter.id) {
+                          setSelectedInverter(null);
+                        } else {
+                          setSelectedInverter(inverter);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Circle className={`h-4 w-4 ${inverter.isOn ? "fill-green-500" : "fill-red-500"}`} />
+                        <span>{inverter.name}</span>
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {inverter.isOn ? "Ligado" : "Desligado"}
                       </div>
                     </div>
-                  )}
+                    
+                    {/* Show string details when inverter is selected */}
+                    {selectedInverter?.id === inverter.id && inverter.strings && (
+                      <div className="ml-6 mt-2 p-3 border-l border-gray-200 dark:border-gray-700">
+                        <p className="text-sm font-medium mb-2">Strings:</p>
+                        <div className="space-y-2">
+                          {inverter.strings.map((string) => (
+                            <div key={string.id} className="grid grid-cols-3 gap-2 text-sm">
+                              <span>{string.name}</span>
+                              <span>{string.voltage.toFixed(1)} V</span>
+                              <span>{string.current.toFixed(2)} A</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </React.Fragment>
                 ))}
               </div>
             </CardContent>

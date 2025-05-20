@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -250,9 +251,17 @@ const IVCurve = () => {
                 table { border-collapse: collapse; width: 100%; margin-top: 20px; }
                 th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
                 th { background-color: #f2f2f2; }
+                .chart-container { height: 300px; margin: 20px 0; border: 1px solid #ddd; padding: 10px; }
+                .header { display: flex; justify-content: space-between; align-items: center; }
+                .header h2 { margin: 0; }
+                .date { font-size: 14px; color: #666; }
               </style>
             </head>
             <body>
+              <div class="header">
+                <h1>Relatório de Análise de Curva IV</h1>
+                <div class="date">Data: ${new Date().toLocaleDateString()} - ${new Date().toLocaleTimeString()}</div>
+              </div>
               ${content.innerHTML}
             </body>
           </html>
@@ -414,7 +423,7 @@ const IVCurve = () => {
               <p className="mt-4 text-muted-foreground">Processando dados...</p>
             </div>
           ) : (
-            <div ref={printRef} className="grid grid-cols-1 gap-6">
+            <div className="flex flex-col gap-6">
               <div className="flex justify-end gap-2 print:hidden">
                 <Button variant="outline" size="sm" onClick={handlePrint}>
                   <Printer className="h-4 w-4 mr-2" />
@@ -426,149 +435,178 @@ const IVCurve = () => {
                 </Button>
               </div>
               
-              {/* IV Curve Chart - Combined */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">
-                    Curva IV - Comparativo
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                          label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} 
-                          type="number"
-                          domain={[0, 1000]}
-                          allowDataOverflow
-                        />
-                        <YAxis 
-                          yAxisId="left" 
-                          label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }}
-                        />
-                        <Tooltip />
-                        <Legend />
-                        
-                        {selectedStrings.map((string, index) => (
-                          <Line 
-                            key={string.id}
-                            yAxisId="left" 
-                            type="monotone" 
-                            data={ivCurveData[string.id] || []} 
-                            dataKey="current" 
-                            name={string.name} 
-                            stroke={chartColors[index % chartColors.length]}
-                            dot={false} 
-                          />
-                        ))}
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              {/* Individual IV Curve Charts */}
-              {selectedStrings.map((string, index) => (
-                <Card key={string.id}>
+              <div ref={printRef} className="grid grid-cols-1 gap-6">
+                {/* IV Curve Chart - Combined */}
+                <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">
-                      Curva IV - {string.name}
+                      Curva IV - Comparativo
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-[250px]">
+                    <div className="h-[350px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart
-                          data={ivCurveData[string.id] || []}
                           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="voltage" label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} />
-                          <YAxis yAxisId="left" label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }} />
-                          <YAxis yAxisId="right" orientation="right" label={{ value: 'Potência (W)', angle: -90, position: 'insideRight' }} />
+                          <XAxis 
+                            label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} 
+                            type="number"
+                            domain={[0, 1000]}
+                            allowDataOverflow
+                          />
+                          <YAxis 
+                            yAxisId="left" 
+                            label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }}
+                          />
                           <Tooltip />
                           <Legend />
-                          <Line yAxisId="left" type="monotone" dataKey="current" stroke={chartColors[index % chartColors.length]} name="Corrente" dot={false} />
-                          <Line yAxisId="right" type="monotone" dataKey="power" stroke="#82ca9d" name="Potência" dot={false} />
+                          
+                          {selectedStrings.map((string, index) => (
+                            <Line 
+                              key={string.id}
+                              yAxisId="left" 
+                              type="monotone" 
+                              data={ivCurveData[string.id] || []} 
+                              dataKey="current" 
+                              name={string.name} 
+                              stroke={chartColors[index % chartColors.length]}
+                              dot={false} 
+                              strokeWidth={2}
+                            />
+                          ))}
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
                   </CardContent>
                 </Card>
-              ))}
-              
-              {/* Technical Data */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Dados Técnicos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Parâmetro</TableHead>
-                        <TableHead>Valor</TableHead>
-                        <TableHead>Unidade</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>Tensão de Circuito Aberto (Voc)</TableCell>
-                        <TableCell>{technicalParameters.voc}</TableCell>
-                        <TableCell>V</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Corrente de Curto-Circuito (Isc)</TableCell>
-                        <TableCell>{technicalParameters.isc}</TableCell>
-                        <TableCell>A</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Tensão de Potência Máxima (Vmp)</TableCell>
-                        <TableCell>{technicalParameters.vmp}</TableCell>
-                        <TableCell>V</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Corrente de Potência Máxima (Imp)</TableCell>
-                        <TableCell>{technicalParameters.imp}</TableCell>
-                        <TableCell>A</TableCell>
-                        <TableCell className="text-yellow-500">Atenção</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Potência Máxima (Pmax)</TableCell>
-                        <TableCell>{technicalParameters.pmax}</TableCell>
-                        <TableCell>W</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Fator de Preenchimento (FF)</TableCell>
-                        <TableCell>{technicalParameters.ff}</TableCell>
-                        <TableCell>-</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Temperatura</TableCell>
-                        <TableCell>{technicalParameters.temperature}</TableCell>
-                        <TableCell>°C</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell>Irradiância</TableCell>
-                        <TableCell>{technicalParameters.irradiance}</TableCell>
-                        <TableCell>W/m²</TableCell>
-                        <TableCell className="text-green-500">Normal</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+                
+                {/* Individual IV Curve Charts */}
+                {selectedStrings.map((string, index) => (
+                  <Card key={string.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">
+                        Curva IV - {string.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart
+                            data={ivCurveData[string.id] || []}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="voltage" 
+                              label={{ value: 'Tensão (V)', position: 'insideBottom', offset: -5 }} 
+                            />
+                            <YAxis 
+                              yAxisId="left" 
+                              label={{ value: 'Corrente (A)', angle: -90, position: 'insideLeft' }} 
+                            />
+                            <YAxis 
+                              yAxisId="right" 
+                              orientation="right" 
+                              label={{ value: 'Potência (W)', angle: -90, position: 'insideRight' }} 
+                            />
+                            <Tooltip />
+                            <Legend />
+                            <Line 
+                              yAxisId="left" 
+                              type="monotone" 
+                              dataKey="current" 
+                              stroke={chartColors[index % chartColors.length]} 
+                              name="Corrente" 
+                              dot={false} 
+                              strokeWidth={2}
+                            />
+                            <Line 
+                              yAxisId="right" 
+                              type="monotone" 
+                              dataKey="power" 
+                              stroke="#82ca9d" 
+                              name="Potência" 
+                              dot={false} 
+                              strokeWidth={2}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                
+                {/* Technical Data */}
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">Dados Técnicos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Parâmetro</TableHead>
+                          <TableHead>Valor</TableHead>
+                          <TableHead>Unidade</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow>
+                          <TableCell>Tensão de Circuito Aberto (Voc)</TableCell>
+                          <TableCell>{technicalParameters.voc}</TableCell>
+                          <TableCell>V</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Corrente de Curto-Circuito (Isc)</TableCell>
+                          <TableCell>{technicalParameters.isc}</TableCell>
+                          <TableCell>A</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Tensão de Potência Máxima (Vmp)</TableCell>
+                          <TableCell>{technicalParameters.vmp}</TableCell>
+                          <TableCell>V</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Corrente de Potência Máxima (Imp)</TableCell>
+                          <TableCell>{technicalParameters.imp}</TableCell>
+                          <TableCell>A</TableCell>
+                          <TableCell className="text-yellow-500">Atenção</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Potência Máxima (Pmax)</TableCell>
+                          <TableCell>{technicalParameters.pmax}</TableCell>
+                          <TableCell>W</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Fator de Preenchimento (FF)</TableCell>
+                          <TableCell>{technicalParameters.ff}</TableCell>
+                          <TableCell>-</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Temperatura</TableCell>
+                          <TableCell>{technicalParameters.temperature}</TableCell>
+                          <TableCell>°C</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                        <TableRow>
+                          <TableCell>Irradiância</TableCell>
+                          <TableCell>{technicalParameters.irradiance}</TableCell>
+                          <TableCell>W/m²</TableCell>
+                          <TableCell className="text-green-500">Normal</TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
         </DialogContent>

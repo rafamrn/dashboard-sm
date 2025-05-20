@@ -32,14 +32,14 @@ const WeatherStation = () => {
   const currentTemperature = weatherData[weatherData.length - 1].temperature;
   
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-2 h-full w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sun className="h-5 w-5" />
           Estação Meteorológica
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex items-center gap-3 border rounded-lg p-3">
             <Sun className="h-8 w-8 text-yellow-500" />
@@ -57,20 +57,43 @@ const WeatherStation = () => {
           </div>
         </div>
         
-        <div className="h-[250px]">
+        <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={weatherData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="time" />
-              <YAxis yAxisId="left" label={{ value: 'Irradiância (W/m²)', angle: -90, position: 'insideLeft' }} />
-              <YAxis yAxisId="right" orientation="right" label={{ value: 'Temperatura (°C)', angle: -90, position: 'insideRight' }} />
+              <YAxis 
+                yAxisId="left" 
+                label={{ value: 'Irradiância (W/m²)', angle: -90, position: 'insideLeft' }}
+              />
+              <YAxis 
+                yAxisId="right" 
+                orientation="right" 
+                label={{ value: 'Temperatura (°C)', angle: -90, position: 'insideRight' }} 
+              />
               <Tooltip />
-              <Legend />
-              <Line yAxisId="left" type="monotone" dataKey="irradiance" name="Irradiância" stroke="#F59E0B" dot={false} />
-              <Line yAxisId="right" type="monotone" dataKey="temperature" name="Temperatura" stroke="#EF4444" dot={false} />
+              <Legend wrapperStyle={{ paddingTop: '10px' }} />
+              <Line 
+                yAxisId="left" 
+                type="monotone" 
+                dataKey="irradiance" 
+                name="Irradiância" 
+                stroke="#F59E0B" 
+                dot={false}
+                strokeWidth={2}
+              />
+              <Line 
+                yAxisId="right" 
+                type="monotone" 
+                dataKey="temperature" 
+                name="Temperatura" 
+                stroke="#EF4444" 
+                dot={false}
+                strokeWidth={2}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

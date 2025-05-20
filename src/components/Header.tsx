@@ -13,11 +13,11 @@ const Header = () => {
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   
-  // Update current date and time every minute
+  // Update current date and time every second for a more real-time display
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
-    }, 60000);
+    }, 1000);
     
     return () => clearInterval(interval);
   }, []);
@@ -56,7 +56,7 @@ const Header = () => {
   };
   
   const formattedDate = format(currentDateTime, "dd/MM/yyyy");
-  const formattedTime = format(currentDateTime, "HH:mm");
+  const formattedTime = format(currentDateTime, "HH:mm:ss");
   
   return (
     <header className="sticky top-0 z-10 bg-primary text-primary-foreground shadow-md">
@@ -67,7 +67,7 @@ const Header = () => {
         </div>
         
         <div className="hidden md:flex items-center text-sm mr-4">
-          <span className="bg-primary-foreground/20 rounded-lg px-3 py-1">
+          <span className="bg-primary-foreground/20 rounded-lg px-3 py-1 font-medium">
             {formattedDate} | {formattedTime}
           </span>
         </div>
