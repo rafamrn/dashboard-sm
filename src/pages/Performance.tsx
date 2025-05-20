@@ -2,9 +2,11 @@
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
 import InverterOperationChart from "@/components/dashboard/InverterOperationChart";
+import StatusGauge from "@/components/dashboard/StatusGauge";
 
 type Period = "daily" | "monthly" | "annual";
 
@@ -19,7 +21,10 @@ const Performance = () => {
       actual: 72.5, 
       expected: 80.0,
       operationHours: 10.5,
-      totalHours: 12.0
+      totalHours: 12.0,
+      temperature: 42.5,
+      efficiency: 86.3,
+      voltage: 380.2
     },
     { 
       id: "inv2", 
@@ -27,7 +32,10 @@ const Performance = () => {
       actual: 77.3, 
       expected: 80.0,
       operationHours: 11.2,
-      totalHours: 12.0
+      totalHours: 12.0,
+      temperature: 44.1,
+      efficiency: 89.5,
+      voltage: 378.9
     },
     { 
       id: "inv3", 
@@ -35,7 +43,10 @@ const Performance = () => {
       actual: 73.8, 
       expected: 80.0,
       operationHours: 9.8,
-      totalHours: 12.0
+      totalHours: 12.0,
+      temperature: 43.8,
+      efficiency: 84.7,
+      voltage: 379.5
     },
     { 
       id: "inv4", 
@@ -43,7 +54,10 @@ const Performance = () => {
       actual: 65.2, 
       expected: 80.0,
       operationHours: 8.5,
-      totalHours: 12.0
+      totalHours: 12.0,
+      temperature: 45.2,
+      efficiency: 79.8,
+      voltage: 376.8
     }
   ];
   
@@ -96,18 +110,63 @@ const Performance = () => {
       <h2 className="text-xl font-semibold mt-8 mb-4">Performance por Inversor</h2>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {inverters.map((inverter) => (
-          <div key={inverter.id} className="grid gap-4">
-            <PerformancePieChart
-              inverterName={inverter.name}
-              actualValue={inverter.actual}
-              expectedValue={inverter.expected}
-            />
-            <InverterOperationChart
-              name={inverter.name}
-              operationHours={inverter.operationHours}
-              totalHours={inverter.totalHours}
-            />
-          </div>
+          <Card key={inverter.id} className="p-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">{inverter.name}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Performance Pie Chart */}
+              <PerformancePieChart
+                inverterName={inverter.name}
+                actualValue={inverter.actual}
+                expectedValue={inverter.expected}
+              />
+              
+              {/* Operation Hours Gauge */}
+              <div className="mt-4 mb-2">
+                <h3 className="text-sm font-medium mb-2">Horas de Operação</h3>
+                <StatusGauge
+                  value={inverter.operationHours}
+                  maxValue={inverter.totalHours}
+                  label="Operação"
+                  unit="h"
+                />
+              </div>
+              
+              {/* Temperature Gauge */}
+              <div className="mt-4 mb-2">
+                <h3 className="text-sm font-medium mb-2">Temperatura</h3>
+                <StatusGauge
+                  value={inverter.temperature}
+                  maxValue={60}
+                  label="Temperatura"
+                  unit="°C"
+                />
+              </div>
+              
+              {/* Efficiency Gauge */}
+              <div className="mt-4 mb-2">
+                <h3 className="text-sm font-medium mb-2">Eficiência</h3>
+                <StatusGauge
+                  value={inverter.efficiency}
+                  maxValue={100}
+                  label="Eficiência"
+                  unit="%"
+                />
+              </div>
+              
+              {/* Voltage Gauge */}
+              <div className="mt-4 mb-2">
+                <h3 className="text-sm font-medium mb-2">Tensão</h3>
+                <StatusGauge
+                  value={inverter.voltage}
+                  maxValue={400}
+                  label="Tensão"
+                  unit="V"
+                />
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>
