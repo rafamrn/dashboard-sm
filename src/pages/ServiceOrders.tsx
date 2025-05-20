@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -13,13 +12,28 @@ import {
   TableCell 
 } from "@/components/ui/table";
 import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogClose
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
+import { 
   FileText, 
   AlertTriangle, 
   CheckCircle, 
   Clock, 
   Calendar, 
   Filter, 
-  Plus 
+  Plus,
+  Save
 } from "lucide-react";
 
 // Mock data for service orders
@@ -79,6 +93,92 @@ const mockServiceOrders = [
 const ServiceOrders = () => {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const [orderData, setOrderData] = useState(mockServiceOrders);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [newOrder, setNewOrder] = useState({
+    id: "",
+    title: "",
+    equipment: "",
+    priority: "Média",
+    status: "Pendente",
+    createdAt: "",
+    assignedTo: "",
+    description: ""
+  });
+  const { toast } = useToast();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewOrder({
+      ...newOrder,
+      [name]: value
+    });
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
+    setNewOrder({
+      ...newOrder,
+      [name]: value
+    });
+  };
+
+  const generateOrderId = () => {
+    const lastOrderId = orderData.length > 0 
+      ? parseInt(orderData[orderData.length - 1].id.replace("OS", ""))
+      : 0;
+    return `OS${String(lastOrderId + 1).padStart(3, '0')}`;
+  };
+
+  const handleCreateOrder = () => {
+    // Validate form
+    if (!newOrder.title || !newOrder.equipment || !newOrder.description) {
+      toast({
+        title: "Erro ao criar ordem",
+        description: "Preencha todos os campos obrigatórios.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Create new order with current date and generated ID
+    const currentDate = new Date().toISOString();
+    const orderId = generateOrderId();
+    
+    const createdOrder = {
+      ...newOrder,
+      id: orderId,
+      createdAt: currentDate,
+      status: newOrder.status || "Pendente"
+    };
+
+    // Add to orders list
+    const updatedOrders = [...orderData, createdOrder];
+    setOrderData(updatedOrders);
+    
+    // Reset form and close dialog
+    setNewOrder({
+      id: "",
+      title: "",
+      equipment: "",
+      priority: "Média",
+      status: "Pendente",
+      createdAt: "",
+      assignedTo: "",
+      description: ""
+    });
+    
+    setDialogOpen(false);
+    
+    // Show success toast
+    toast({
+      title: "Ordem de serviço criada",
+      description: `Ordem ${orderId} criada com sucesso.`,
+      variant: "default"
+    });
+    
+    // Select the newly created order
+    setSelectedOrder(orderId);
+  };
 
   const filterOrders = (status?: string) => {
     if (status && status !== "all") {
@@ -88,9 +188,9 @@ const ServiceOrders = () => {
         "scheduled": "Agendado",
         "completed": "Concluído"
       };
-      return mockServiceOrders.filter(order => order.status === statusMap[status]);
+      return orderData.filter(order => order.status === statusMap[status]);
     }
-    return mockServiceOrders;
+    return orderData;
   };
 
   const getStatusBadge = (status: string) => {
@@ -133,7 +233,7 @@ const ServiceOrders = () => {
   };
 
   const getOrderDetails = (id: string) => {
-    return mockServiceOrders.find(order => order.id === id);
+    return orderData.find(order => order.id === id);
   };
 
   return (
@@ -150,12 +250,127 @@ const ServiceOrders = () => {
             <Filter className="h-4 w-4" />
             Filtrar
           </Button>
-          <Button className="flex items-center gap-2" variant="default">
+          <Button 
+            className="flex items-center gap-2" 
+            variant="default"
+            onClick={() => setDialogOpen(true)}
+          >
             <Plus className="h-4 w-4" />
             Nova Ordem
           </Button>
         </div>
       </div>
+
+      {/* Nova Ordem Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Nova Ordem de Serviço</DialogTitle>
+            <DialogDescription>
+              Preencha os dados para criar uma nova ordem de serviço.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Título</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="Título da ordem de serviço"
+                  value={newOrder.title}
+                  onChange={handleInputChange}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="equipment">Equipamento</Label>
+                <Input
+                  id="equipment"
+                  name="equipment"
+                  placeholder="Nome do equipamento"
+                  value={newOrder.equipment}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="priority">Prioridade</Label>
+                <Select 
+                  value={newOrder.priority} 
+                  onValueChange={(value) => handleSelectChange("priority", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a prioridade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Alta">Alta</SelectItem>
+                    <SelectItem value="Média">Média</SelectItem>
+                    <SelectItem value="Baixa">Baixa</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select 
+                  value={newOrder.status} 
+                  onValueChange={(value) => handleSelectChange("status", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Pendente">Pendente</SelectItem>
+                    <SelectItem value="Agendado">Agendado</SelectItem>
+                    <SelectItem value="Em andamento">Em andamento</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="assignedTo">Responsável</Label>
+              <Input
+                id="assignedTo"
+                name="assignedTo"
+                placeholder="Nome do responsável"
+                value={newOrder.assignedTo}
+                onChange={handleInputChange}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Descrição</Label>
+              <Textarea
+                id="description"
+                name="description"
+                placeholder="Descreva o problema ou serviço a ser realizado"
+                value={newOrder.description}
+                onChange={handleInputChange}
+                rows={3}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancelar</Button>
+            </DialogClose>
+            <Button 
+              type="submit" 
+              onClick={handleCreateOrder}
+              className="flex items-center gap-2"
+            >
+              <Save className="h-4 w-4" />
+              Criar Ordem
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid grid-cols-4 md:w-[600px]">
