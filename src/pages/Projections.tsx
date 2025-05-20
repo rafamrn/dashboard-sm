@@ -17,6 +17,9 @@ const months = [
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
 ];
 
+// Updated to use current year dynamically
+const currentYear = new Date().getFullYear();
+
 const initialProjections: MonthProjection[] = months.map((month, index) => {
   const baseValue = 2000 + Math.cos((index / 12) * Math.PI * 2) * 1000;
   const projected = Math.round(baseValue);
@@ -36,6 +39,7 @@ const Projections = () => {
   const [projections, setProjections] = useState<MonthProjection[]>(initialProjections);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState<string>("");
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
   
   const startEditing = (index: number) => {
     setEditingIndex(index);
@@ -60,6 +64,10 @@ const Projections = () => {
   const cancelEdit = () => {
     setEditingIndex(null);
   };
+
+  const changeYear = (direction: 'prev' | 'next') => {
+    setSelectedYear(prev => direction === 'next' ? prev + 1 : prev - 1);
+  };
   
   return (
     <div className="space-y-6">
@@ -73,7 +81,18 @@ const Projections = () => {
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Metas de Geração</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle>Metas de Geração</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => changeYear('prev')}>
+                  &#8592;
+                </Button>
+                <span className="font-semibold">{selectedYear}</span>
+                <Button variant="outline" size="sm" onClick={() => changeYear('next')}>
+                  &#8594;
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">

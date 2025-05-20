@@ -2,9 +2,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileText } from "lucide-react";
+import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileText, Settings } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { format } from "date-fns";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const location = useLocation();
@@ -127,17 +135,6 @@ const Header = () => {
               Relatórios
             </Link>
           </Button>
-          
-          <Button
-            variant={isActive("/projections") ? "secondary" : "ghost"}
-            size="sm"
-            asChild
-          >
-            <Link to="/projections" className="flex items-center gap-2">
-              <BarChart className="h-4 w-4" />
-              Projeções
-            </Link>
-          </Button>
         </nav>
         
         <div className="flex items-center space-x-2">
@@ -150,14 +147,35 @@ const Header = () => {
             {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
           </Toggle>
           
-          <Toggle 
-            pressed={isDarkMode} 
-            onPressedChange={toggleTheme}
-            size="sm" 
-            aria-label="Toggle theme"
-          >
-            {isDarkMode ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-          </Toggle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Toggle 
+                size="sm" 
+                aria-label="Settings"
+              >
+                <Settings className="h-4 w-4" />
+              </Toggle>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Configurações</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={toggleTheme}>
+                {isDarkMode ? (
+                  <Sun className="h-4 w-4 mr-2" />
+                ) : (
+                  <Moon className="h-4 w-4 mr-2" />
+                )}
+                <span>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/projections" className="flex items-center">
+                  <BarChart className="h-4 w-4 mr-2" />
+                  <span>Projeções</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Button variant="ghost" size="sm" className="flex items-center gap-2" asChild>
             <Link to="/">
