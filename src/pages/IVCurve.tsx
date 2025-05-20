@@ -1,8 +1,7 @@
-
 import React, { useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Circle, XCircle, ChevronDown, ChevronUp, FilePdf, Printer } from "lucide-react";
+import { Check, Circle, XCircle, ChevronDown, ChevronUp, FileText, Printer } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -430,7 +429,7 @@ const IVCurve = () => {
                   Imprimir
                 </Button>
                 <Button size="sm" onClick={handleExportPDF}>
-                  <FilePdf className="h-4 w-4 mr-2" />
+                  <FileText className="h-4 w-4 mr-2" />
                   Exportar PDF
                 </Button>
               </div>

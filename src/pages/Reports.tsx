@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon, FilePdf, FileText, Download } from "lucide-react";
+import { Calendar as CalendarIcon, FileText, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const Reports = () => {

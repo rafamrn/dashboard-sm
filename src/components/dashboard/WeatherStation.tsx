@@ -32,7 +32,7 @@ const WeatherStation = () => {
   const currentTemperature = weatherData[weatherData.length - 1].temperature;
   
   return (
-    <Card className="col-span-2 h-full w-full">
+    <Card className="col-span-2 w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sun className="h-5 w-5" />
