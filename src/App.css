@@ -6,6 +6,7 @@
   padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 @keyframes logo-spin {
@@ -21,12 +22,14 @@
 .fullscreen-app {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* Dashboard-specific elements */
 .dashboard-container {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .dashboard-grid {
@@ -35,25 +38,56 @@
   width: 100%;
   gap: 0.5rem;
   padding: 0.5rem;
+  overflow: hidden;
 }
 
 /* Efficient use of space */
 .compact-card {
-  padding: 0.5rem;
+  padding: 0.35rem;
 }
 
 .compact-header {
-  padding: 0.5rem;
+  padding: 0.35rem;
 }
 
-/* Custom scrollbar styling */
+/* Grid layout for dashboards */
+.grid-rows-12 {
+  grid-template-rows: repeat(12, minmax(0, 1fr));
+}
+
+/* Make components more compact for TV display */
+.recharts-wrapper {
+  font-size: 0.75rem;
+}
+
+.recharts-text {
+  font-size: 0.65rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none;
+  }
+}
+
+/* Status indicators */
+.status-on {
+  color: rgb(34, 197, 94);
+}
+
+.status-off {
+  color: rgb(239, 68, 68);
+}
+
+/* Custom scrollbar styling - for cases where scrolling is needed in sub-components */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(217, 217, 217, 0.1);
+  background: rgba(30, 41, 59, 0.2);
   border-radius: 10px;
 }
 
@@ -78,31 +112,5 @@
 /* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--primary)) rgba(217, 217, 217, 0.1);
-}
-
-/* Grid layout for dashboards */
-.grid-rows-12 {
-  grid-template-rows: repeat(12, minmax(0, 1fr));
-}
-
-/* Make components more compact for TV display */
-.recharts-wrapper {
-  font-size: 0.75rem;
-}
-
-.recharts-text {
-  font-size: 0.65rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .mobile-hidden {
-    display: none;
-  }
-  
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
+  scrollbar-color: hsl(var(--primary)) rgba(30, 41, 59, 0.2);
 }

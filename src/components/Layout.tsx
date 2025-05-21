@@ -11,9 +11,9 @@ const Layout = () => {
   }, []);
   
   return (
-    <div className="h-screen w-full bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden">
+    <div className="h-screen w-screen bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden">
       <Header />
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full overflow-hidden">
         <div className="w-full h-full">
           <Outlet />
         </div>
