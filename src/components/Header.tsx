@@ -67,20 +67,14 @@ const Header = () => {
   const formattedTime = format(currentDateTime, "HH:mm:ss");
   
   return (
-    <header className="bg-primary text-primary-foreground shadow-md py-1 px-2">
-      <div className="flex items-center justify-between h-10">
+    <header className="bg-primary text-primary-foreground shadow-md py-2 px-4">
+      <div className="flex items-center justify-between max-w-[2100px] mx-auto">
         <div className="flex items-center space-x-2">
           <Sun className="h-5 w-5" />
           <h1 className="text-lg font-bold">SolarMonitor</h1>
         </div>
         
-        <div className="hidden md:flex items-center text-xs mr-2">
-          <span className="bg-primary-foreground/20 rounded-lg px-2 py-1 font-medium">
-            {formattedDate} | {formattedTime}
-          </span>
-        </div>
-        
-        <nav className="hidden md:flex space-x-1">
+        <nav className="hidden md:flex items-center justify-center space-x-1 flex-1">
           <Button
             variant={isActive("/dashboard") ? "secondary" : "ghost"}
             size="sm"
@@ -154,7 +148,13 @@ const Header = () => {
           </Button>
         </nav>
         
-        <div className="flex items-center space-x-1">
+        <div className="flex items-center space-x-2">
+          <div className="hidden md:flex items-center text-xs mr-2">
+            <span className="bg-primary-foreground/20 rounded-lg px-2 py-1 font-medium">
+              {formattedDate} | {formattedTime}
+            </span>
+          </div>
+        
           <Toggle 
             pressed={isFullscreen} 
             onPressedChange={toggleFullscreen}
