@@ -11,10 +11,10 @@ const Layout = () => {
   }, []);
   
   return (
-    <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="h-screen w-full bg-gray-50 dark:bg-gray-900 flex flex-col overflow-hidden">
       <Header />
-      <main className="flex-1 w-full overflow-y-auto">
-        <div className="w-full h-full px-4">
+      <main className="flex-1 w-full">
+        <div className="w-full h-full">
           <Outlet />
         </div>
       </main>

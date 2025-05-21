@@ -81,6 +81,20 @@
   scrollbar-color: hsl(var(--primary)) rgba(217, 217, 217, 0.1);
 }
 
+/* Grid layout for dashboards */
+.grid-rows-12 {
+  grid-template-rows: repeat(12, minmax(0, 1fr));
+}
+
+/* Make components more compact for TV display */
+.recharts-wrapper {
+  font-size: 0.75rem;
+}
+
+.recharts-text {
+  font-size: 0.65rem;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .mobile-hidden {
