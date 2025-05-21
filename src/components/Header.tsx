@@ -67,22 +67,22 @@ const Header = () => {
   const formattedTime = format(currentDateTime, "HH:mm:ss");
   
   return (
-    <header className="bg-primary text-primary-foreground shadow-md py-1 px-2 h-12">
-      <div className="flex items-center justify-between max-w-[2100px] mx-auto h-full">
+    <header className="bg-primary text-primary-foreground shadow-md py-2 px-4">
+      <div className="flex items-center justify-between max-w-[2100px] mx-auto">
         <div className="flex items-center space-x-2">
-          <Sun className="h-4 w-4" />
-          <h1 className="text-base font-bold">SolarMonitor</h1>
+          <Sun className="h-5 w-5" />
+          <h1 className="text-lg font-bold">SolarMonitor</h1>
         </div>
         
         <nav className="hidden md:flex items-center justify-center space-x-1 flex-1">
           <Button
             variant={isActive("/dashboard") ? "secondary" : "ghost"}
             size="sm"
-            className="h-7 px-2"
+            className="h-8 px-2"
             asChild
           >
             <Link to="/dashboard" className="flex items-center gap-1">
-              <Gauge className="h-3 w-3" />
+              <Gauge className="h-3.5 w-3.5" />
               <span className="text-xs">Dashboard</span>
             </Link>
           </Button>
@@ -90,11 +90,11 @@ const Header = () => {
           <Button
             variant={isActive("/map") ? "secondary" : "ghost"}
             size="sm"
-            className="h-7 px-2"
+            className="h-8 px-2"
             asChild
           >
             <Link to="/map" className="flex items-center gap-1">
-              <Map className="h-3 w-3" />
+              <Map className="h-3.5 w-3.5" />
               <span className="text-xs">Mapa</span>
             </Link>
           </Button>
@@ -102,11 +102,11 @@ const Header = () => {
           <Button
             variant={isActive("/iv-curve") ? "secondary" : "ghost"}
             size="sm"
-            className="h-7 px-2"
+            className="h-8 px-2"
             asChild
           >
             <Link to="/iv-curve" className="flex items-center gap-1">
-              <Activity className="h-3 w-3" />
+              <Activity className="h-3.5 w-3.5" />
               <span className="text-xs">Curva IV</span>
             </Link>
           </Button>
@@ -114,11 +114,11 @@ const Header = () => {
           <Button
             variant={isActive("/performance") ? "secondary" : "ghost"}
             size="sm"
-            className="h-7 px-2"
+            className="h-8 px-2"
             asChild
           >
             <Link to="/performance" className="flex items-center gap-1">
-              <LineChart className="h-3 w-3" />
+              <LineChart className="h-3.5 w-3.5" />
               <span className="text-xs">Performance</span>
             </Link>
           </Button>
@@ -126,11 +126,11 @@ const Header = () => {
           <Button
             variant={isActive("/service-orders") ? "secondary" : "ghost"}
             size="sm"
-            className="h-7 px-2"
+            className="h-8 px-2"
             asChild
           >
             <Link to="/service-orders" className="flex items-center gap-1">
-              <Wrench className="h-3 w-3" />
+              <Wrench className="h-3.5 w-3.5" />
               <span className="text-xs">Ordens de Serviço</span>
             </Link>
           </Button>
@@ -138,11 +138,11 @@ const Header = () => {
           <Button
             variant={isActive("/reports") ? "secondary" : "ghost"}
             size="sm"
-            className="h-7 px-2"
+            className="h-8 px-2"
             asChild
           >
             <Link to="/reports" className="flex items-center gap-1">
-              <FileText className="h-3 w-3" />
+              <FileText className="h-3.5 w-3.5" />
               <span className="text-xs">Relatórios</span>
             </Link>
           </Button>
