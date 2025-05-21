@@ -6,6 +6,7 @@
   padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 @keyframes logo-spin {
@@ -21,12 +22,14 @@
 .fullscreen-app {
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 /* Dashboard-specific elements */
 .dashboard-container {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 
 .dashboard-grid {
@@ -52,3 +55,4 @@
     display: none;
   }
 }
+

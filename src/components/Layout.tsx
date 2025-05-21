@@ -13,10 +13,8 @@ const Layout = () => {
   return (
     <div className="min-h-screen w-full bg-gray-50 dark:bg-gray-900 flex flex-col">
       <Header />
-      <main className="flex-1 w-full overflow-y-auto">
-        <div className="container mx-auto p-4">
-          <Outlet />
-        </div>
+      <main className="flex-1 w-full">
+        <Outlet />
       </main>
       <Toaster />
     </div>
