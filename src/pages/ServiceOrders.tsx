@@ -285,8 +285,8 @@ const ServiceOrders = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="h-full w-full p-2">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Ordens de Serviço</h1>
           <p className="text-muted-foreground">
@@ -473,7 +473,7 @@ const ServiceOrders = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="h-[calc(100%-60px)]">
         <TabsList className="grid grid-cols-4 md:w-[600px]">
           <TabsTrigger value="all">Todas</TabsTrigger>
           <TabsTrigger value="pending">Pendentes</TabsTrigger>
@@ -481,14 +481,14 @@ const ServiceOrders = () => {
           <TabsTrigger value="completed">Concluídas</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <Card>
+        <TabsContent value="all" className="h-full overflow-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-full">
+            <div className="md:col-span-3 h-full">
+              <Card className="h-full flex flex-col">
                 <CardHeader className="pb-2">
                   <CardTitle>Lista de Ordens de Serviço</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="overflow-auto flex-1">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -521,13 +521,13 @@ const ServiceOrders = () => {
               </Card>
             </div>
             
-            <div>
+            <div className="h-full">
               {selectedOrder ? (
-                <Card>
+                <Card className="h-full flex flex-col">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Detalhes da OS</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 overflow-auto flex-1">
                     {(() => {
                       const order = getOrderDetails(selectedOrder);
                       if (!order) return <p>Ordem não encontrada</p>;
@@ -616,8 +616,8 @@ const ServiceOrders = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
-                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-[300px]">
+                <Card className="h-full flex flex-col">
+                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full">
                     <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium mb-2">Nenhuma ordem selecionada</h3>
                     <p className="text-sm text-muted-foreground">
@@ -630,15 +630,14 @@ const ServiceOrders = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="pending" className="space-y-4">
-          {/* Same content structure as "all" but with filtered data */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <Card>
+        <TabsContent value="pending" className="h-full overflow-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-full">
+            <div className="md:col-span-3 h-full">
+              <Card className="h-full flex flex-col">
                 <CardHeader className="pb-2">
                   <CardTitle>Ordens Pendentes</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="overflow-auto flex-1">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -671,13 +670,13 @@ const ServiceOrders = () => {
               </Card>
             </div>
             
-            <div>
+            <div className="h-full">
               {selectedOrder && filterOrders("pending").some(order => order.id === selectedOrder) ? (
-                <Card>
+                <Card className="h-full flex flex-col">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Detalhes da OS</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 overflow-auto flex-1">
                     {(() => {
                       const order = getOrderDetails(selectedOrder);
                       if (!order) return <p>Ordem não encontrada</p>;
@@ -747,8 +746,8 @@ const ServiceOrders = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
-                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-[300px]">
+                <Card className="h-full flex flex-col">
+                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full">
                     <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium mb-2">Nenhuma ordem selecionada</h3>
                     <p className="text-sm text-muted-foreground">
@@ -761,15 +760,14 @@ const ServiceOrders = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="inProgress">
-          {/* Same structure but with "in progress" filtered data */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <Card>
+        <TabsContent value="inProgress" className="h-full overflow-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-full">
+            <div className="md:col-span-3 h-full">
+              <Card className="h-full flex flex-col">
                 <CardHeader className="pb-2">
                   <CardTitle>Ordens em Andamento</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="overflow-auto flex-1">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -802,15 +800,13 @@ const ServiceOrders = () => {
               </Card>
             </div>
             
-            {/* Order details panel - same as previous tabs */}
-            <div>
+            <div className="h-full">
               {selectedOrder && filterOrders("inProgress").some(order => order.id === selectedOrder) ? (
-                <Card>
+                <Card className="h-full flex flex-col">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Detalhes da OS</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Same order details structure */}
+                  <CardContent className="space-y-4 overflow-auto flex-1">
                     {(() => {
                       const order = getOrderDetails(selectedOrder);
                       if (!order) return <p>Ordem não encontrada</p>;
@@ -880,8 +876,8 @@ const ServiceOrders = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
-                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-[300px]">
+                <Card className="h-full flex flex-col">
+                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full">
                     <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium mb-2">Nenhuma ordem selecionada</h3>
                     <p className="text-sm text-muted-foreground">
@@ -894,15 +890,14 @@ const ServiceOrders = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="completed">
-          {/* Same structure but with completed filtered data */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <Card>
+        <TabsContent value="completed" className="h-full overflow-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-full">
+            <div className="md:col-span-3 h-full">
+              <Card className="h-full flex flex-col">
                 <CardHeader className="pb-2">
                   <CardTitle>Ordens Concluídas</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="overflow-auto flex-1">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -935,15 +930,13 @@ const ServiceOrders = () => {
               </Card>
             </div>
             
-            {/* Order details panel - same as previous tabs */}
-            <div>
+            <div className="h-full">
               {selectedOrder && filterOrders("completed").some(order => order.id === selectedOrder) ? (
-                <Card>
+                <Card className="h-full flex flex-col">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">Detalhes da OS</CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Same order details structure */}
+                  <CardContent className="space-y-4 overflow-auto flex-1">
                     {(() => {
                       const order = getOrderDetails(selectedOrder);
                       if (!order) return <p>Ordem não encontrada</p>;
@@ -1013,8 +1006,8 @@ const ServiceOrders = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <Card>
-                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-[300px]">
+                <Card className="h-full flex flex-col">
+                  <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full">
                     <AlertTriangle className="h-12 w-12 text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium mb-2">Nenhuma ordem selecionada</h3>
                     <p className="text-sm text-muted-foreground">

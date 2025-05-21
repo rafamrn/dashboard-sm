@@ -20,23 +20,25 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/" element={<Layout />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="map" element={<Map />} />
-            <Route path="performance" element={<Performance />} />
-            <Route path="projections" element={<Projections />} />
-            <Route path="iv-curve" element={<IVCurve />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="service-orders" element={<ServiceOrders />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="w-screen h-screen overflow-hidden">
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="map" element={<Map />} />
+              <Route path="performance" element={<Performance />} />
+              <Route path="projections" element={<Projections />} />
+              <Route path="iv-curve" element={<IVCurve />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="service-orders" element={<ServiceOrders />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
     </TooltipProvider>
   </QueryClientProvider>
 );

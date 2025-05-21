@@ -67,131 +67,140 @@ const Header = () => {
   const formattedTime = format(currentDateTime, "HH:mm:ss");
   
   return (
-    <header className="sticky top-0 z-10 bg-primary text-primary-foreground shadow-md">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+    <header className="bg-primary text-primary-foreground shadow-md py-1 px-2">
+      <div className="flex items-center justify-between h-10">
         <div className="flex items-center space-x-2">
-          <Sun className="h-6 w-6" />
-          <h1 className="text-xl font-bold">SolarMonitor</h1>
+          <Sun className="h-5 w-5" />
+          <h1 className="text-lg font-bold">SolarMonitor</h1>
         </div>
         
-        <div className="hidden md:flex items-center text-sm mr-4">
-          <span className="bg-primary-foreground/20 rounded-lg px-3 py-1 font-medium">
+        <div className="hidden md:flex items-center text-xs mr-2">
+          <span className="bg-primary-foreground/20 rounded-lg px-2 py-1 font-medium">
             {formattedDate} | {formattedTime}
           </span>
         </div>
         
-        <nav className="hidden md:flex space-x-4">
+        <nav className="hidden md:flex space-x-1">
           <Button
             variant={isActive("/dashboard") ? "secondary" : "ghost"}
             size="sm"
+            className="h-8 px-2"
             asChild
           >
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <Gauge className="h-4 w-4" />
-              Dashboard
+            <Link to="/dashboard" className="flex items-center gap-1">
+              <Gauge className="h-3.5 w-3.5" />
+              <span className="text-xs">Dashboard</span>
             </Link>
           </Button>
           
           <Button
             variant={isActive("/map") ? "secondary" : "ghost"}
             size="sm"
+            className="h-8 px-2"
             asChild
           >
-            <Link to="/map" className="flex items-center gap-2">
-              <Map className="h-4 w-4" />
-              Mapa
+            <Link to="/map" className="flex items-center gap-1">
+              <Map className="h-3.5 w-3.5" />
+              <span className="text-xs">Mapa</span>
             </Link>
           </Button>
           
           <Button
             variant={isActive("/iv-curve") ? "secondary" : "ghost"}
             size="sm"
+            className="h-8 px-2"
             asChild
           >
-            <Link to="/iv-curve" className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              Curva IV
+            <Link to="/iv-curve" className="flex items-center gap-1">
+              <Activity className="h-3.5 w-3.5" />
+              <span className="text-xs">Curva IV</span>
             </Link>
           </Button>
           
           <Button
             variant={isActive("/performance") ? "secondary" : "ghost"}
             size="sm"
+            className="h-8 px-2"
             asChild
           >
-            <Link to="/performance" className="flex items-center gap-2">
-              <LineChart className="h-4 w-4" />
-              Performance
+            <Link to="/performance" className="flex items-center gap-1">
+              <LineChart className="h-3.5 w-3.5" />
+              <span className="text-xs">Performance</span>
             </Link>
           </Button>
           
           <Button
             variant={isActive("/service-orders") ? "secondary" : "ghost"}
             size="sm"
+            className="h-8 px-2"
             asChild
           >
-            <Link to="/service-orders" className="flex items-center gap-2">
-              <Wrench className="h-4 w-4" />
-              Ordens de Serviço
+            <Link to="/service-orders" className="flex items-center gap-1">
+              <Wrench className="h-3.5 w-3.5" />
+              <span className="text-xs">Ordens de Serviço</span>
             </Link>
           </Button>
           
           <Button
             variant={isActive("/reports") ? "secondary" : "ghost"}
             size="sm"
+            className="h-8 px-2"
             asChild
           >
-            <Link to="/reports" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Relatórios
+            <Link to="/reports" className="flex items-center gap-1">
+              <FileText className="h-3.5 w-3.5" />
+              <span className="text-xs">Relatórios</span>
             </Link>
           </Button>
         </nav>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1">
           <Toggle 
             pressed={isFullscreen} 
             onPressedChange={toggleFullscreen}
             size="sm" 
+            variant="outline"
+            className="h-7 w-7 p-0"
             aria-label="Toggle fullscreen"
           >
-            {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+            {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
           </Toggle>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Toggle 
-                size="sm" 
+                size="sm"
+                variant="outline"
+                className="h-7 w-7 p-0"
                 aria-label="Settings"
               >
-                <Settings className="h-4 w-4" />
+                <Settings className="h-3.5 w-3.5" />
               </Toggle>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Configurações</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={toggleTheme}>
+              <DropdownMenuItem onClick={toggleTheme} className="text-xs">
                 {isDarkMode ? (
-                  <Sun className="h-4 w-4 mr-2" />
+                  <Sun className="h-3.5 w-3.5 mr-2" />
                 ) : (
-                  <Moon className="h-4 w-4 mr-2" />
+                  <Moon className="h-3.5 w-3.5 mr-2" />
                 )}
                 <span>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild className="text-xs">
                 <Link to="/projections" className="flex items-center">
-                  <BarChart className="h-4 w-4 mr-2" />
+                  <BarChart className="h-3.5 w-3.5 mr-2" />
                   <span>Projeções</span>
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <Button variant="ghost" size="sm" className="flex items-center gap-2" asChild>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0" asChild>
             <Link to="/">
-              <LogOut className="h-4 w-4" />
-              <span className="hidden md:inline">Sair</span>
+              <LogOut className="h-3.5 w-3.5" />
             </Link>
           </Button>
         </div>
