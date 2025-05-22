@@ -70,53 +70,57 @@ const Dashboard = () => {
   const expectedPerformance = 175.0;
   
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="h-full w-full p-2 grid grid-cols-12 grid-rows-12 gap-2 overflow-hidden">
+      {/* Header area - 1 row */}
+      <div className="col-span-12 row-span-1 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Monitoramento da Usina</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl font-bold tracking-tight">Monitoramento da Usina</h1>
+          <p className="text-xs text-muted-foreground">
             Monitoramento em tempo real da usina solar fotovoltaica
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <Badge 
-            className={`text-lg h-10 px-4 ${
-              systemStatus === "OPERANDO" ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
-            }`}
-          >
-            {systemStatus}
-          </Badge>
-        </div>
+        <Badge 
+          className={`text-base h-8 px-3 ${
+            systemStatus === "OPERANDO" ? "bg-success text-success-foreground" : "bg-destructive text-destructive-foreground"
+          }`}
+        >
+          {systemStatus}
+        </Badge>
       </div>
       
-      {/* Energy charts and performance */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2">
-          <ChartSelector />
-        </div>
-        <div>
-          <div className="border rounded-lg p-6 bg-card text-card-foreground shadow-sm">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">Performance Diária</h3>
-            <div className="flex flex-col items-center space-y-6">
-              <StatusGauge 
-                value={powerOutput} 
-                maxValue={100} 
-                label="Nível de Produção" 
-                unit="%" 
-              />
-              <PerformancePieChart 
-                actualValue={actualPerformance}
-                expectedValue={expectedPerformance}
-              />
-            </div>
+      {/* Energy charts - 5 rows */}
+      <div className="col-span-8 row-span-5 border rounded-lg bg-card shadow-sm">
+        <ChartSelector />
+      </div>
+      
+      {/* Performance metrics - 5 rows */}
+      <div className="col-span-4 row-span-5 grid grid-rows-2 gap-2">
+        <div className="border rounded-lg p-2 bg-card text-card-foreground shadow-sm">
+          <h3 className="text-lg font-semibold leading-none tracking-tight mb-2">Performance Diária</h3>
+          <div className="flex items-center justify-around">
+            <StatusGauge 
+              value={powerOutput} 
+              maxValue={100} 
+              label="Nível de Produção" 
+              unit="%" 
+            />
           </div>
         </div>
+        <div className="border rounded-lg p-2 bg-card text-card-foreground shadow-sm">
+          <PerformancePieChart 
+            actualValue={actualPerformance}
+            expectedValue={expectedPerformance}
+          />
+        </div>
       </div>
       
-      {/* Weather Station */}
-      <WeatherStation />
+      {/* Weather Station - 2 rows */}
+      <div className="col-span-12 row-span-2">
+        <WeatherStation />
+      </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Summary Cards - 1 row */}
+      <div className="col-span-12 row-span-1 grid grid-cols-4 gap-2">
         <SummaryCard 
           title="Energia Gerada Hoje"
           value={`${totalEnergyToday.toFixed(1)} kWh`}
@@ -142,23 +146,24 @@ const Dashboard = () => {
         />
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {/* Inverters and System Status - 2 rows */}
+      <div className="col-span-12 row-span-2 grid grid-cols-3 gap-2">
         {/* Inverters */}
         {inverters.map((inverter) => (
           <InverterCard key={inverter.id} data={inverter} />
         ))}
         
         {/* System status card */}
-        <div className="border rounded-lg p-4 bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between">
-          <h3 className="font-medium mb-4">Estado do Sistema</h3>
-          <div className="space-y-4">
+        <div className="border rounded-lg p-2 bg-white dark:bg-slate-800 shadow-sm flex flex-col justify-between">
+          <h3 className="font-medium text-sm">Estado do Sistema</h3>
+          <div className="space-y-2 text-xs">
             <div className="flex justify-between items-center">
               <span>Estado de Operação</span>
-              <Badge className="bg-success text-success-foreground">AUTOMÁTICO</Badge>
+              <Badge className="bg-success text-success-foreground text-xs">AUTOMÁTICO</Badge>
             </div>
             <div className="flex justify-between items-center">
               <span>Nível de Combustível</span>
-              <div className="w-24 h-6 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-20 h-4 bg-gray-200 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-yellow-500"
                   style={{ width: '75%' }}
@@ -173,7 +178,8 @@ const Dashboard = () => {
         </div>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2">
+      {/* String Boxes - 1 row */}
+      <div className="col-span-12 row-span-1 grid grid-cols-2 gap-2">
         <StringBox title="String Box 01" data={stringBox1Data} />
         <StringBox title="String Box 02" data={stringBox2Data} />
       </div>
