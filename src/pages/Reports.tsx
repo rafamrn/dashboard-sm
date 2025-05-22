@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,13 +7,54 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Calendar as CalendarIcon, FileText, Download } from "lucide-react";
+import { Calendar as CalendarIcon, FileText, Download, Eye } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 const Reports = () => {
   const [date, setDate] = useState<Date>(new Date());
   const [reportGenerated, setReportGenerated] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<null | {
+    id: string;
+    date: Date;
+    type: string;
+    status: string;
+  }>(null);
   const { toast } = useToast();
+  
+  // Mock data for previously generated reports
+  const previousReports = [
+    {
+      id: "REL-2025-04-15",
+      date: new Date(2025, 3, 15),
+      type: "Mensal",
+      status: "Completo"
+    },
+    {
+      id: "REL-2025-03-15",
+      date: new Date(2025, 2, 15),
+      type: "Mensal",
+      status: "Completo"
+    },
+    {
+      id: "REL-2025-02-15",
+      date: new Date(2025, 1, 15),
+      type: "Mensal",
+      status: "Completo"
+    },
+    {
+      id: "REL-2025-01-10",
+      date: new Date(2025, 0, 10),
+      type: "Anual",
+      status: "Completo"
+    },
+    {
+      id: "REL-2024-12-15",
+      date: new Date(2024, 11, 15),
+      type: "Mensal",
+      status: "Completo"
+    }
+  ];
   
   // Generate mock report data
   const generateReportData = () => {
@@ -78,6 +120,7 @@ const Reports = () => {
     
     setTimeout(() => {
       setReportGenerated(true);
+      setSelectedReport(null);
       toast({
         title: "Relatório pronto",
         description: "O relatório foi gerado com sucesso."
@@ -91,14 +134,29 @@ const Reports = () => {
       description: "O relatório está sendo baixado."
     });
     
-    // In a real app, this would trigger the actual PDF download
-    // For now, we'll simulate it with a timeout
     setTimeout(() => {
       toast({
         title: "Download concluído",
         description: "O relatório foi baixado com sucesso."
       });
     }, 1500);
+  };
+  
+  const handleViewPreviousReport = (report: typeof previousReports[0]) => {
+    toast({
+      title: "Carregando relatório",
+      description: `Carregando relatório ${report.id}...`
+    });
+    
+    setTimeout(() => {
+      setSelectedReport(report);
+      setReportGenerated(true);
+      setDate(report.date);
+      toast({
+        title: "Relatório carregado",
+        description: `Relatório ${report.id} carregado com sucesso.`
+      });
+    }, 800);
   };
   
   return (
@@ -109,6 +167,60 @@ const Reports = () => {
           Relatórios mensais de desempenho da usina solar
         </p>
       </div>
+      
+      {/* Previous Reports Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de Relatórios</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Identificador</TableHead>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ação</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {previousReports.map((report) => (
+                  <TableRow key={report.id}>
+                    <TableCell>{report.id}</TableCell>
+                    <TableCell>{format(report.date, "dd/MM/yyyy")}</TableCell>
+                    <TableCell>{report.type}</TableCell>
+                    <TableCell>
+                      <Badge className="bg-green-500">{report.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleViewPreviousReport(report)}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          Visualizar
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={handleDownloadReport}
+                        >
+                          <Download className="h-4 w-4 mr-1" />
+                          Baixar
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
       
       <div className="flex flex-col md:flex-row gap-4 md:items-end">
         <div className="space-y-2">
@@ -142,7 +254,7 @@ const Reports = () => {
         
         <Button onClick={handleGenerateReport}>
           <FileText className="mr-2 h-4 w-4" />
-          Gerar Relatório
+          Gerar Novo Relatório
         </Button>
       </div>
       
@@ -151,7 +263,12 @@ const Reports = () => {
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>Relatório de Desempenho - {format(date, "MMMM yyyy")}</CardTitle>
+                <CardTitle>
+                  {selectedReport ? 
+                    `Relatório ${selectedReport.id} - ${format(selectedReport.date, "MMMM yyyy")}` :
+                    `Relatório de Desempenho - ${format(date, "MMMM yyyy")}`
+                  }
+                </CardTitle>
                 <Button variant="outline" onClick={handleDownloadReport}>
                   <Download className="mr-2 h-4 w-4" />
                   Baixar PDF

@@ -89,15 +89,15 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Energy charts and performance */}
+      {/* Energy charts and performance - Fixed height and aligned */}
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2">
+        <div className="md:col-span-2 h-[500px] flex flex-col">
           <ChartSelector />
         </div>
-        <div>
-          <div className="border rounded-lg p-6 bg-card text-card-foreground shadow-sm">
+        <div className="h-[500px] flex flex-col">
+          <div className="border rounded-lg p-6 bg-card text-card-foreground shadow-sm h-full flex flex-col">
             <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">Performance Diária</h3>
-            <div className="flex flex-col items-center space-y-6">
+            <div className="flex flex-col items-center space-y-6 flex-grow justify-center">
               <StatusGauge 
                 value={powerOutput} 
                 maxValue={100} 

@@ -1,17 +1,23 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import PerformancePieChart from "@/components/dashboard/PerformancePieChart";
 import PerformanceChart from "@/components/dashboard/PerformanceChart";
-import InverterOperationChart from "@/components/dashboard/InverterOperationChart";
-import StatusGauge from "@/components/dashboard/StatusGauge";
+import CircularGauge from "@/components/dashboard/CircularGauge";
 
 type Period = "daily" | "monthly" | "annual";
 
 const Performance = () => {
   const [period, setPeriod] = useState<Period>("daily");
+  const [animateGauges, setAnimateGauges] = useState(true);
+
+  // Trigger gauge animation when changing periods
+  useEffect(() => {
+    setAnimateGauges(true);
+    const timer = setTimeout(() => setAnimateGauges(false), 1500);
+    return () => clearTimeout(timer);
+  }, [period]);
 
   // Mock data for inverters
   const inverters = [
@@ -114,7 +120,7 @@ const Performance = () => {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">{inverter.name}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 flex flex-col items-center">
               {/* Performance Pie Chart */}
               <PerformancePieChart
                 inverterName={inverter.name}
@@ -122,48 +128,62 @@ const Performance = () => {
                 expectedValue={inverter.expected}
               />
               
-              {/* Operation Hours Gauge */}
-              <div className="mt-4 mb-2">
-                <h3 className="text-sm font-medium mb-2">Horas de Operação</h3>
-                <StatusGauge
-                  value={inverter.operationHours}
-                  maxValue={inverter.totalHours}
-                  label="Operação"
-                  unit="h"
-                />
-              </div>
-              
-              {/* Temperature Gauge */}
-              <div className="mt-4 mb-2">
-                <h3 className="text-sm font-medium mb-2">Temperatura</h3>
-                <StatusGauge
-                  value={inverter.temperature}
-                  maxValue={60}
-                  label="Temperatura"
-                  unit="°C"
-                />
-              </div>
-              
-              {/* Efficiency Gauge */}
-              <div className="mt-4 mb-2">
-                <h3 className="text-sm font-medium mb-2">Eficiência</h3>
-                <StatusGauge
-                  value={inverter.efficiency}
-                  maxValue={100}
-                  label="Eficiência"
-                  unit="%"
-                />
-              </div>
-              
-              {/* Voltage Gauge */}
-              <div className="mt-4 mb-2">
-                <h3 className="text-sm font-medium mb-2">Tensão</h3>
-                <StatusGauge
-                  value={inverter.voltage}
-                  maxValue={400}
-                  label="Tensão"
-                  unit="V"
-                />
+              {/* Circular gauges section with animation */}
+              <div className="grid grid-cols-2 gap-4 w-full mt-6">
+                {/* Operation Hours Gauge */}
+                <div className="flex flex-col items-center">
+                  <h3 className="text-sm font-medium mb-2">Horas de Operação</h3>
+                  <CircularGauge
+                    value={inverter.operationHours}
+                    maxValue={inverter.totalHours}
+                    label="Operação"
+                    unit="h"
+                    size="sm"
+                    showAnimation={animateGauges}
+                  />
+                </div>
+                
+                {/* Temperature Gauge */}
+                <div className="flex flex-col items-center">
+                  <h3 className="text-sm font-medium mb-2">Temperatura</h3>
+                  <CircularGauge
+                    value={inverter.temperature}
+                    maxValue={60}
+                    label="Temperatura"
+                    unit="°C"
+                    size="sm"
+                    thresholds={{ warning: 50, critical: 80 }}
+                    showAnimation={animateGauges}
+                  />
+                </div>
+                
+                {/* Efficiency Gauge */}
+                <div className="flex flex-col items-center">
+                  <h3 className="text-sm font-medium mb-2">Eficiência</h3>
+                  <CircularGauge
+                    value={inverter.efficiency}
+                    maxValue={100}
+                    label="Eficiência"
+                    unit="%"
+                    size="sm"
+                    thresholds={{ warning: 50, critical: 30 }}
+                    showAnimation={animateGauges}
+                  />
+                </div>
+                
+                {/* Voltage Gauge */}
+                <div className="flex flex-col items-center">
+                  <h3 className="text-sm font-medium mb-2">Tensão</h3>
+                  <CircularGauge
+                    value={inverter.voltage}
+                    maxValue={400}
+                    label="Tensão"
+                    unit="V"
+                    size="sm"
+                    thresholds={{ warning: 50, critical: 30 }}
+                    showAnimation={animateGauges}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
