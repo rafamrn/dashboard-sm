@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Sun, BatteryFull, Gauge, ArrowUp } from "lucide-react";
 import InverterCard, { InverterData } from "@/components/dashboard/InverterCard";
@@ -89,15 +88,15 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* Energy charts and performance - Fixed height and aligned */}
+      {/* Energy charts and performance - Height adjusted to match */}
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 h-[500px] flex flex-col">
+        <div className="md:col-span-2 h-[450px] flex flex-col">
           <ChartSelector />
         </div>
-        <div className="h-[500px] flex flex-col">
+        <div className="h-[450px] flex flex-col">
           <div className="border rounded-lg p-6 bg-card text-card-foreground shadow-sm h-full flex flex-col">
-            <h3 className="text-2xl font-semibold leading-none tracking-tight mb-6">Performance Diária</h3>
-            <div className="flex flex-col items-center space-y-6 flex-grow justify-center">
+            <h3 className="text-xl font-semibold leading-none tracking-tight mb-4">Performance Diária</h3>
+            <div className="flex flex-col items-center space-y-4 flex-grow justify-center">
               <StatusGauge 
                 value={powerOutput} 
                 maxValue={100} 
