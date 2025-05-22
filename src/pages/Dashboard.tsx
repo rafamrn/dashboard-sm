@@ -70,7 +70,7 @@ const Dashboard = () => {
   const expectedPerformance = 175.0;
   
   return (
-    <div className="h-full w-full p-2 grid grid-cols-12 grid-rows-12 gap-2 overflow-hidden">
+    <div className="h-full p-2 grid grid-cols-12 grid-rows-12 gap-2">
       {/* Header area - 1 row */}
       <div className="col-span-12 row-span-1 flex items-center justify-between">
         <div>
@@ -89,7 +89,7 @@ const Dashboard = () => {
       </div>
       
       {/* Energy charts - 5 rows */}
-      <div className="col-span-8 row-span-5 border rounded-lg bg-card shadow-sm">
+      <div className="col-span-8 row-span-5">
         <ChartSelector />
       </div>
       
@@ -115,7 +115,7 @@ const Dashboard = () => {
       </div>
       
       {/* Weather Station - 2 rows */}
-      <div className="col-span-12 row-span-2">
+      <div className="col-span-12 row-span-1">
         <WeatherStation />
       </div>
       
@@ -178,8 +178,8 @@ const Dashboard = () => {
         </div>
       </div>
       
-      {/* String Boxes - 1 row */}
-      <div className="col-span-12 row-span-1 grid grid-cols-2 gap-2">
+      {/* String Boxes - 2 rows */}
+      <div className="col-span-12 row-span-2 grid grid-cols-2 gap-2">
         <StringBox title="String Box 01" data={stringBox1Data} />
         <StringBox title="String Box 02" data={stringBox2Data} />
       </div>
