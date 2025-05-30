@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -70,6 +69,12 @@ const Header = () => {
       <div className="flex items-center justify-between max-w-[2100px] mx-auto">
         <div className="flex items-center space-x-2">
           <SidebarTrigger className="text-primary-foreground hover:bg-primary-foreground/20" />
+        </div>
+        
+        {/* Center logo */}
+        <div className="flex items-center space-x-2">
+          <Sun className="h-6 w-6 text-primary-foreground" />
+          <h1 className="text-xl font-bold text-primary-foreground">SolarMonitor</h1>
         </div>
         
         <div className="flex items-center space-x-2">
