@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, Maximize, Minimize, Map, Gauge, BarChart, LogOut, Activity, LineChart, FileText, Settings, Wrench } from "lucide-react";
+import { Sun, Moon, Maximize, Minimize, LogOut, Settings } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { format } from "date-fns";
 import { 
   DropdownMenu, 
@@ -15,10 +16,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
-  const location = useLocation();
-  const isActive = (path: string) => location.pathname === path;
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   
   // Update current date and time every second for a more real-time display
@@ -70,83 +69,8 @@ const Header = () => {
     <header className="bg-primary text-primary-foreground shadow-md py-2 px-4">
       <div className="flex items-center justify-between max-w-[2100px] mx-auto">
         <div className="flex items-center space-x-2">
-          <Sun className="h-5 w-5" />
-          <h1 className="text-lg font-bold">SolarMonitor</h1>
+          <SidebarTrigger className="text-primary-foreground hover:bg-primary-foreground/20" />
         </div>
-        
-        <nav className="hidden md:flex items-center justify-center space-x-1 flex-1">
-          <Button
-            variant={isActive("/dashboard") ? "secondary" : "ghost"}
-            size="sm"
-            className="h-8 px-2"
-            asChild
-          >
-            <Link to="/dashboard" className="flex items-center gap-1">
-              <Gauge className="h-3.5 w-3.5" />
-              <span className="text-xs">Dashboard</span>
-            </Link>
-          </Button>
-          
-          <Button
-            variant={isActive("/map") ? "secondary" : "ghost"}
-            size="sm"
-            className="h-8 px-2"
-            asChild
-          >
-            <Link to="/map" className="flex items-center gap-1">
-              <Map className="h-3.5 w-3.5" />
-              <span className="text-xs">Mapa</span>
-            </Link>
-          </Button>
-          
-          <Button
-            variant={isActive("/iv-curve") ? "secondary" : "ghost"}
-            size="sm"
-            className="h-8 px-2"
-            asChild
-          >
-            <Link to="/iv-curve" className="flex items-center gap-1">
-              <Activity className="h-3.5 w-3.5" />
-              <span className="text-xs">Curva IV</span>
-            </Link>
-          </Button>
-          
-          <Button
-            variant={isActive("/performance") ? "secondary" : "ghost"}
-            size="sm"
-            className="h-8 px-2"
-            asChild
-          >
-            <Link to="/performance" className="flex items-center gap-1">
-              <LineChart className="h-3.5 w-3.5" />
-              <span className="text-xs">Performance</span>
-            </Link>
-          </Button>
-          
-          <Button
-            variant={isActive("/service-orders") ? "secondary" : "ghost"}
-            size="sm"
-            className="h-8 px-2"
-            asChild
-          >
-            <Link to="/service-orders" className="flex items-center gap-1">
-              <Wrench className="h-3.5 w-3.5" />
-              <span className="text-xs">Ordens de Serviço</span>
-            </Link>
-          </Button>
-          
-          <Button
-            variant={isActive("/reports") ? "secondary" : "ghost"}
-            size="sm"
-            className="h-8 px-2"
-            asChild
-          >
-            <Link to="/reports" className="flex items-center gap-1">
-              <FileText className="h-3.5 w-3.5" />
-              <span className="text-xs">Relatórios</span>
-            </Link>
-          </Button>
-        </nav>
         
         <div className="flex items-center space-x-2">
           <div className="hidden md:flex items-center text-xs mr-2">
@@ -187,13 +111,6 @@ const Header = () => {
                   <Moon className="h-3.5 w-3.5 mr-2" />
                 )}
                 <span>{isDarkMode ? 'Modo Claro' : 'Modo Escuro'}</span>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild className="text-xs">
-                <Link to="/projections" className="flex items-center">
-                  <BarChart className="h-3.5 w-3.5 mr-2" />
-                  <span>Projeções</span>
-                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
